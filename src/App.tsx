@@ -3,10 +3,12 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import { BrowserRouter as Router, Routes, Route, useLocation } from 'react-router-dom';
+import { BrowserRouter as Router, Routes, Route, useLocation, Navigate } from 'react-router-dom';
 import { useEffect } from 'react';
 import Navbar from './components/Navbar';
 import Footer from './components/Footer';
+import ProtectedRoute from './components/ProtectedRoute';
+import PublicRoute from './components/PublicRoute';
 import LandingPage from './pages/LandingPage';
 import BlogsPage from './pages/BlogsPage';
 import ProjectsPage from './pages/ProjectsPage';
@@ -47,10 +49,21 @@ const AppShell = () => {
           <Route path="/community" element={<CommunityPage />} />
           <Route path="/videos" element={<VideosPage />} />
           <Route path="/sponsorship" element={<SponsorshipPage />} />
-          <Route path="/dashboard" element={<Dashboard />} />
-          <Route path="/lesson/:id" element={<LessonPage />} />
-          <Route path="/login" element={<LoginPage />} />
-          <Route path="/register" element={<RegisterPage />} />
+          
+          {/* Protected Routes */}
+          <Route element={<ProtectedRoute />}>
+            <Route path="/dashboard" element={<Dashboard />} />
+            <Route path="/lesson/:id" element={<LessonPage />} />
+          </Route>
+
+          {/* Public/Auth Routes */}
+          <Route element={<PublicRoute />}>
+            <Route path="/login" element={<LoginPage />} />
+            <Route path="/register" element={<RegisterPage />} />
+          </Route>
+
+          {/* Catch-all Route: Redirect unknown endpoints to home */}
+          <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>
       </main>
       {!hideChrome && <Footer />}

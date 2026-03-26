@@ -1,5 +1,5 @@
-import { LayoutDashboard, Users, Video, PenSquare, Flame, Zap } from 'lucide-react';
-import { Link, useLocation } from 'react-router-dom';
+import { LayoutDashboard, Users, Video, PenSquare, Flame, Zap, LogOut } from 'lucide-react';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { cn } from '../lib/utils';
 import rootsproutLogo from '../assets/rootsprout-logo.svg';
 
@@ -12,6 +12,12 @@ const navItems = [
 
 export default function LearningNavbar() {
   const location = useLocation();
+  const navigate = useNavigate();
+
+  const handleLogout = () => {
+    localStorage.removeItem('rs_token');
+    navigate('/login');
+  };
 
   return (
     <nav className="sticky top-0 z-50 w-full border-b border-white/10 bg-background/80 backdrop-blur-md">
@@ -56,6 +62,13 @@ export default function LearningNavbar() {
                 referrerPolicy="no-referrer"
               />
             </div>
+            <button
+              onClick={handleLogout}
+              className="h-8 w-8 flex items-center justify-center rounded-full bg-white/5 border border-white/10 text-white/60 hover:bg-red-500/10 hover:text-red-400 hover:border-red-500/20 transition-all"
+              title="Logout"
+            >
+              <LogOut size={14} />
+            </button>
           </div>
         </div>
       </div>

@@ -27,6 +27,7 @@ export default function Dashboard() {
   const [stats, setStats] = useState({ totalXP: 2450, level: 14, xpToNext: 350 });
   const [goals, setGoals] = useState(DEFAULT_GOALS);
   const [achievements, setAchievements] = useState<number[]>([1, 2, 3, 4, 5]);
+  const [user, setUser] = useState<{ name: string; email: string } | null>(null);
   const navigate = useNavigate();
 
   const handleNodeClick = (node: Node) => {
@@ -49,6 +50,7 @@ export default function Dashboard() {
           }))
         );
         setStats(data.stats);
+        setUser(data.user);
         setGoals(data.goals.length ? data.goals : DEFAULT_GOALS);
         setAchievements(data.achievements.length ? data.achievements.map((a) => a.id) : [1, 2, 3, 4, 5]);
       })
@@ -58,6 +60,7 @@ export default function Dashboard() {
           return;
         }
         setDashboardNodes(INITIAL_NODES);
+        setUser(null);
         setGoals(DEFAULT_GOALS);
         setAchievements([1, 2, 3, 4, 5]);
       });
@@ -78,6 +81,13 @@ export default function Dashboard() {
       <div className="mx-auto grid max-w-7xl grid-cols-1 gap-8 px-6 py-10 lg:grid-cols-12">
         {/* Left Sidebar - Stats */}
         <aside className="lg:col-span-3 space-y-6">
+          {user && (
+            <div className="rounded-2xl border border-white/10 bg-surface p-6">
+              <h2 className="mb-2 text-xl font-bold text-white">Welcome back, {user.name}!</h2>
+              <p className="text-sm text-white/50">{user.email}</p>
+            </div>
+          )}
+
           <div className="rounded-2xl border border-white/10 bg-surface p-6">
             <h2 className="mb-4 text-sm font-bold uppercase tracking-widest text-white/40">Your Progress</h2>
             <div className="space-y-4">

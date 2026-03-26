@@ -27,6 +27,13 @@ export type Achievement = {
 };
 
 export type DashboardPayload = {
+  user: {
+    id: number;
+    name: string;
+    email: string;
+    createdAt: string;
+    updatedAt: string;
+  };
   nodes: LearningNode[];
   stats: LearningStats;
   goals: DailyGoal[];
