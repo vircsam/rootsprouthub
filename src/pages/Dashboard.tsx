@@ -1,10 +1,11 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { motion } from 'motion/react';
 import { useNavigate } from 'react-router-dom';
 import SkillNode from '../components/SkillNode';
 import LearningNavbar from '../components/LearningNavbar';
 import { Node } from '../types';
 import { Trophy, Target, Star, BookOpen } from 'lucide-react';
+import { getDashboard } from '../api/learning';
 
 const INITIAL_NODES: Node[] = [
   { id: '1', title: 'Process Basics', topic: 'OS', status: 'completed', progress: 100, position: { x: 0, y: 0 } },
@@ -15,13 +16,56 @@ const INITIAL_NODES: Node[] = [
   { id: '6', title: 'TCP/IP Stack', topic: 'Networking', status: 'locked', progress: 0, position: { x: -120, y: 600 } },
 ];
 
+const DEFAULT_GOALS = [
+  { label: 'Complete 2 lessons', progress: 50 },
+  { label: 'Earn 100 XP', progress: 80 },
+  { label: 'Fix 1 DB query', progress: 0 },
+];
+
 export default function Dashboard() {
-  const [nodes] = useState<Node[]>(INITIAL_NODES);
+  const [dashboardNodes, setDashboardNodes] = useState<Node[]>(INITIAL_NODES);
+  const [stats, setStats] = useState({ totalXP: 2450, level: 14, xpToNext: 350 });
+  const [goals, setGoals] = useState(DEFAULT_GOALS);
+  const [achievements, setAchievements] = useState<number[]>([1, 2, 3, 4, 5]);
   const navigate = useNavigate();
 
   const handleNodeClick = (node: Node) => {
     navigate(`/lesson/${node.id}`);
   };
+
+  useEffect(() => {
+    let mounted = true;
+    getDashboard()
+      .then((data) => {
+        if (!mounted) return;
+        setDashboardNodes(
+          data.nodes.map((node) => ({
+            id: node.id,
+            title: node.title,
+            topic: node.topic as Node['topic'],
+            status: node.status,
+            progress: node.progress,
+            position: node.position,
+          }))
+        );
+        setStats(data.stats);
+        setGoals(data.goals.length ? data.goals : DEFAULT_GOALS);
+        setAchievements(data.achievements.length ? data.achievements.map((a) => a.id) : [1, 2, 3, 4, 5]);
+      })
+      .catch(() => {
+        setDashboardNodes(INITIAL_NODES);
+        setGoals(DEFAULT_GOALS);
+        setAchievements([1, 2, 3, 4, 5]);
+      });
+    return () => {
+      mounted = false;
+    };
+  }, []);
+
+  const xpProgress = Math.min(
+    100,
+    Math.round((stats.totalXP / Math.max(1, stats.totalXP + stats.xpToNext)) * 100)
+  );
 
   return (
     <div className="min-h-screen bg-background">
@@ -38,26 +82,26 @@ export default function Dashboard() {
                   <Star size={16} className="text-primary" />
                   <span className="text-sm">Total XP</span>
                 </div>
-                <span className="font-bold">2,450</span>
+                <span className="font-bold">{stats.totalXP.toLocaleString()}</span>
               </div>
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-2 text-white/60">
                   <Target size={16} className="text-primary" />
                   <span className="text-sm">Current Level</span>
                 </div>
-                <span className="font-bold">14</span>
+                <span className="font-bold">{stats.level}</span>
               </div>
               <div className="h-2 w-full overflow-hidden rounded-full bg-white/5">
-                <div className="h-full w-[65%] bg-primary glow-gold" />
+                <div className="h-full bg-primary glow-gold" style={{ width: `${xpProgress}%` }} />
               </div>
-              <p className="text-center text-[10px] text-white/20">350 XP to Level 15</p>
+              <p className="text-center text-[10px] text-white/20">{stats.xpToNext} XP to next level</p>
             </div>
           </div>
 
           <div className="rounded-2xl border border-white/10 bg-surface p-6">
             <h2 className="mb-4 text-sm font-bold uppercase tracking-widest text-white/40">Achievements</h2>
             <div className="grid grid-cols-3 gap-3">
-              {[1, 2, 3, 4, 5].map((i) => (
+              {achievements.map((i) => (
                 <div key={i} className="flex aspect-square items-center justify-center rounded-xl bg-white/5 border border-white/10 text-primary/40">
                   <Trophy size={20} />
                 </div>
@@ -89,7 +133,7 @@ export default function Dashboard() {
             </svg>
 
             <div className="relative z-10 flex flex-col items-center gap-24">
-              {nodes.map((node) => (
+              {dashboardNodes.map((node) => (
                 <SkillNode 
                   key={node.id} 
                   node={node} 
@@ -105,11 +149,7 @@ export default function Dashboard() {
           <div className="rounded-2xl border border-white/10 bg-surface p-6">
             <h2 className="mb-4 text-sm font-bold uppercase tracking-widest text-white/40">Daily Goals</h2>
             <div className="space-y-4">
-              {[
-                { label: 'Complete 2 lessons', progress: 50 },
-                { label: 'Earn 100 XP', progress: 80 },
-                { label: 'Fix 1 DB query', progress: 0 },
-              ].map((goal, i) => (
+              {goals.map((goal, i) => (
                 <div key={i} className="space-y-2">
                   <div className="flex justify-between text-xs">
                     <span className="text-white/60">{goal.label}</span>

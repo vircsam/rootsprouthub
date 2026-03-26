@@ -1,64 +1,80 @@
-import { useState, type FormEvent } from 'react';
+import { useEffect, useState, type FormEvent } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { ChevronLeft, Terminal as TerminalIcon, Play, CheckCircle2, XCircle, Info } from 'lucide-react';
 import { cn } from '../lib/utils';
+import { getLesson, validateCommand, type LessonStep } from '../api/learning';
 
 export default function LessonPage() {
   const { id } = useParams();
   const navigate = useNavigate();
-  const [progress, setProgress] = useState(33);
+  const [progress, setProgress] = useState(0);
   const [activeStep, setActiveStep] = useState(0);
+  const [steps, setSteps] = useState<LessonStep[]>([]);
   const [terminalInput, setTerminalInput] = useState('');
   const [terminalHistory, setTerminalHistory] = useState<string[]>(['$ rootsprouthub init', 'Initializing system simulation...', 'Ready.']);
   const [isCorrect, setIsCorrect] = useState<boolean | null>(null);
+  const [isLoading, setIsLoading] = useState(true);
 
-  const steps = [
-    {
-      title: "Understanding Processes",
-      content: "A process is an instance of a computer program that is being executed. It contains the program code and its current activity. Each process has its own address space.",
-      task: "Type 'ps aux' to list running processes in the simulation."
-    },
-    {
-      title: "Process States",
-      content: "Processes move through different states: Running, Waiting, and Ready. The OS scheduler decides which process gets CPU time.",
-      task: "Type 'kill -9 1234' to terminate the zombie process."
-    },
-    {
-      title: "Context Switching",
-      content: "When the CPU switches from one process to another, it saves the state of the current process and loads the state of the next one. This is called a context switch.",
-      task: "Type 'top' to see real-time CPU usage."
-    }
-  ];
+  useEffect(() => {
+    if (!id) return;
+    let mounted = true;
+    setIsLoading(true);
+    getLesson(id)
+      .then((data) => {
+        if (!mounted) return;
+        setSteps(data.steps);
+        setActiveStep(0);
+        setProgress(data.steps.length > 0 ? Math.round(100 / data.steps.length) : 0);
+      })
+      .catch(() => {
+        if (!mounted) return;
+        setSteps([]);
+        setProgress(0);
+      })
+      .finally(() => {
+        if (!mounted) return;
+        setIsLoading(false);
+      });
+    return () => {
+      mounted = false;
+    };
+  }, [id]);
 
-  const handleTerminalSubmit = (e: FormEvent) => {
+  const handleTerminalSubmit = async (e: FormEvent) => {
     e.preventDefault();
     if (!terminalInput.trim()) return;
+    if (!id || steps.length === 0) return;
 
     const newHistory = [...terminalHistory, `$ ${terminalInput}`];
-    
-    const expected = activeStep === 0 ? 'ps aux' : activeStep === 1 ? 'kill -9 1234' : 'top';
 
-    if (terminalInput.trim() === expected) {
-      newHistory.push("Success: Command executed correctly.");
-      setIsCorrect(true);
-      setTimeout(() => {
-        if (activeStep < steps.length - 1) {
-          setActiveStep(prev => prev + 1);
-          setProgress(prev => Math.min(100, prev + 33));
-          setIsCorrect(null);
-        } else {
-          setProgress(100);
-        }
-      }, 1500);
-    } else {
-      newHistory.push(`Error: Command not found or invalid for this challenge.`);
+    try {
+      const currentStep = steps[activeStep];
+      const result = await validateCommand(id, currentStep.id, terminalInput.trim());
+      newHistory.push(result.message);
+      setIsCorrect(result.correct);
+      if (result.correct) {
+        setTimeout(() => {
+          if (activeStep < steps.length - 1) {
+            const nextStep = activeStep + 1;
+            setActiveStep(nextStep);
+            setProgress(Math.min(100, Math.round(((nextStep + 1) / steps.length) * 100)));
+            setIsCorrect(null);
+          } else {
+            setProgress(100);
+          }
+        }, 1500);
+      } else {
+        setTimeout(() => setIsCorrect(null), 2000);
+      }
+    } catch {
+      newHistory.push('Error: Unable to validate command right now.');
       setIsCorrect(false);
       setTimeout(() => setIsCorrect(null), 2000);
+    } finally {
+      setTerminalHistory(newHistory);
+      setTerminalInput('');
     }
-
-    setTerminalHistory(newHistory);
-    setTerminalInput('');
   };
 
   return (
@@ -92,32 +108,39 @@ export default function LessonPage() {
 
       <main className="flex flex-1 overflow-hidden">
         <section className="flex w-1/2 flex-col border-r border-white/10 p-10 overflow-y-auto">
-          <AnimatePresence mode="wait">
-            <motion.div
-              key={activeStep}
-              initial={{ opacity: 0, x: -20 }}
-              animate={{ opacity: 1, x: 0 }}
-              exit={{ opacity: 0, x: 20 }}
-              className="space-y-8"
-            >
-              <div className="space-y-2">
-                <span className="text-xs font-bold uppercase tracking-widest text-primary">Step {activeStep + 1} of {steps.length}</span>
-                <h1 className="text-4xl font-black tracking-tight">{steps[activeStep].title}</h1>
-              </div>
+          {!isLoading && steps.length > 0 && (
+            <AnimatePresence mode="wait">
+              <motion.div
+                key={activeStep}
+                initial={{ opacity: 0, x: -20 }}
+                animate={{ opacity: 1, x: 0 }}
+                exit={{ opacity: 0, x: 20 }}
+                className="space-y-8"
+              >
+                <div className="space-y-2">
+                  <span className="text-xs font-bold uppercase tracking-widest text-primary">Step {activeStep + 1} of {steps.length}</span>
+                  <h1 className="text-4xl font-black tracking-tight">{steps[activeStep].title}</h1>
+                </div>
 
-              <div className="rounded-2xl border border-white/5 bg-surface p-8 leading-relaxed text-white/70">
-                {steps[activeStep].content}
-              </div>
+                <div className="rounded-2xl border border-white/5 bg-surface p-8 leading-relaxed text-white/70">
+                  {steps[activeStep].content}
+                </div>
 
-              <div className="rounded-2xl border border-primary/20 bg-primary/5 p-8">
-                <h3 className="mb-4 flex items-center gap-2 font-bold text-primary">
-                  <Play size={18} fill="currentColor" />
-                  Your Challenge
-                </h3>
-                <p className="text-sm text-white/80">{steps[activeStep].task}</p>
-              </div>
-            </motion.div>
-          </AnimatePresence>
+                <div className="rounded-2xl border border-primary/20 bg-primary/5 p-8">
+                  <h3 className="mb-4 flex items-center gap-2 font-bold text-primary">
+                    <Play size={18} fill="currentColor" />
+                    Your Challenge
+                  </h3>
+                  <p className="text-sm text-white/80">{steps[activeStep].task}</p>
+                </div>
+              </motion.div>
+            </AnimatePresence>
+          )}
+          {!isLoading && steps.length === 0 && (
+            <div className="rounded-2xl border border-white/10 bg-surface p-8 text-white/60">
+              No lesson data available yet.
+            </div>
+          )}
 
           <div className="mt-auto flex justify-between pt-10">
             <button 
