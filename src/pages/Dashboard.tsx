@@ -220,14 +220,12 @@ export default function Dashboard() {
         {/* Left Sidebar - Stats */}
         <aside className="hidden lg:block lg:col-span-3 space-y-6">
           {user && (
-            <div>
-              <h2 className="mb-3 text-xl font-bold text-white">Welcome back, {user.name}!</h2>
-              <div className="rounded-2xl border border-white/10 bg-surface p-6">
-                <p className="text-sm text-white/50">{user.email}</p>
-                <div className="flex items-center justify-between text-xs text-white/60">
-                  <span>Currently studying</span>
-                  <span className="text-gold/80">{currentTopics.join(', ') || activeTopic || 'Getting started'}</span>
-                </div>
+            <div className="rounded-2xl border border-white/10 bg-surface p-6">
+              <h2 className="mb-2 text-xl font-bold text-white">Welcome back, {user.name}!</h2>
+              <p className="text-sm text-white/50">{user.email}</p>
+              <div className="mt-4 flex items-center justify-between text-xs text-white/60">
+                <span>Currently studying</span>
+                <span className="text-gold/80">{currentTopics.join(', ') || activeTopic || 'Getting started'}</span>
               </div>
             </div>
           )}

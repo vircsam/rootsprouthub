@@ -114,8 +114,8 @@ export default function LessonPage() {
         </div>
       </header>
 
-      <main className="flex flex-1 overflow-hidden">
-        <section className="flex w-1/2 flex-col border-r border-white/10 p-10 overflow-y-auto">
+      <main className="flex flex-1 flex-col md:flex-row md:overflow-hidden">
+        <section className="flex w-full md:w-1/2 flex-col border-b border-white/10 md:border-b-0 md:border-r p-6 md:p-10 overflow-y-auto">
           {!isLoading && steps.length > 0 && (
             <AnimatePresence mode="wait">
               <motion.div
@@ -180,7 +180,7 @@ export default function LessonPage() {
           </div>
         </section>
 
-        <section className="relative flex w-1/2 flex-col bg-[#050505] p-6">
+        <section className="relative flex min-h-[60vh] w-full md:w-1/2 flex-col bg-[#050505] p-6 md:min-h-full">
           <div className="mb-4 flex items-center justify-between">
             <div className="flex items-center gap-2 text-white/40">
               <TerminalIcon size={16} />

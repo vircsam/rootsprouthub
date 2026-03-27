@@ -30,7 +30,7 @@ const SkillNode: FC<SkillNodeProps> = ({ node, onClick, isLast }) => {
         onClick={() => !isLocked && onClick(node)}
         disabled={isLocked}
         className={cn(
-          "relative flex h-20 w-20 items-center justify-center rounded-full border-4 transition-all duration-300",
+          "relative flex h-24 w-24 items-center justify-center rounded-full border-4 transition-all duration-300",
           isLocked 
             ? "border-white/10 bg-white/5 text-white/20 cursor-not-allowed" 
             : isCompleted
@@ -47,16 +47,16 @@ const SkillNode: FC<SkillNodeProps> = ({ node, onClick, isLast }) => {
         )}
 
         {!isLocked && !isCompleted && (
-          <svg className="absolute -inset-2 h-24 w-24 -rotate-90">
+          <svg className="absolute -inset-2 h-28 w-28 -rotate-90">
             <circle
-              cx="48"
-              cy="48"
-              r="44"
+              cx="56"
+              cy="56"
+              r="52"
               fill="none"
               stroke="currentColor"
               strokeWidth="4"
-              strokeDasharray={2 * Math.PI * 44}
-              strokeDashoffset={2 * Math.PI * 44 * (1 - node.progress / 100)}
+              strokeDasharray={2 * Math.PI * 52}
+              strokeDashoffset={2 * Math.PI * 52 * (1 - node.progress / 100)}
               className="text-primary/20"
             />
           </svg>
