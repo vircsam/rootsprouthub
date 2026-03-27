@@ -5,7 +5,7 @@ import SkillNode from '../components/SkillNode';
 import LearningNavbar from '../components/LearningNavbar';
 import { Node } from '../types';
 import { Trophy, Target, Star, BookOpen } from 'lucide-react';
-import { getDashboard } from '../api/learning';
+import { getDashboard, getRoadmaps, type RoadmapTopic } from '../api/learning';
 
 const INITIAL_NODES: Node[] = [
   { id: '1', title: 'Process Basics', topic: 'OS', status: 'completed', progress: 100, position: { x: 0, y: 0 } },
@@ -29,6 +29,9 @@ export default function Dashboard() {
   const [achievements, setAchievements] = useState<number[]>([1, 2, 3, 4, 5]);
   const [user, setUser] = useState<{ name: string; email: string } | null>(null);
   const [isMobile, setIsMobile] = useState(false);
+  const [roadmaps, setRoadmaps] = useState<RoadmapTopic[]>([]);
+  const [currentTopics, setCurrentTopics] = useState<string[]>([]);
+  const [activeTopic, setActiveTopic] = useState<string>('');
   const navigate = useNavigate();
 
   const handleNodeClick = (node: Node) => {
@@ -68,6 +71,18 @@ export default function Dashboard() {
         setUser(null);
         setGoals(DEFAULT_GOALS);
         setAchievements([1, 2, 3, 4, 5]);
+      });
+
+    getRoadmaps()
+      .then((data) => {
+        if (!mounted) return;
+        setRoadmaps(data.topics);
+        setCurrentTopics(data.currentTopics);
+        setActiveTopic(data.currentTopics[0] || data.topics[0]?.topic || '');
+      })
+      .catch(() => {
+        setRoadmaps([]);
+        setCurrentTopics([]);
       });
     return () => {
       mounted = false;
@@ -141,7 +156,47 @@ export default function Dashboard() {
 
         {/* Main Content - Skill Tree */}
         <main className="lg:col-span-6">
-          <div className="relative flex flex-col items-center py-20">
+          <div className="relative flex flex-col items-center py-10">
+            {roadmaps.length > 0 && activeTopic && (
+              <div className="w-full max-w-3xl mb-10 rounded-3xl border border-white/10 bg-surface p-6">
+                <div className="flex items-center justify-between mb-6">
+                  <div>
+                    <p className="text-xs uppercase tracking-widest text-white/40">Roadmap</p>
+                    <h3 className="text-2xl font-bold">{activeTopic}</h3>
+                  </div>
+                  {currentTopics.includes(activeTopic) && (
+                    <span className="px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider bg-gold/20 text-gold border border-gold/40">
+                      Currently Studying
+                    </span>
+                  )}
+                </div>
+
+                {roadmaps
+                  .filter((topic) => topic.topic === activeTopic)
+                  .map((topic) => (
+                    <div key={topic.topic} className="grid gap-4 md:grid-cols-3">
+                      {topic.sections.map((section) => (
+                        <div key={section.title} className="rounded-2xl border border-white/10 bg-black-deep/40 p-4">
+                          <div className="mb-3">
+                            <span className="inline-flex items-center gap-2 rounded-full border border-gold/40 bg-gold/10 px-3 py-1 text-[10px] font-bold uppercase tracking-widest text-gold">
+                              {section.title}
+                            </span>
+                          </div>
+                          <div className="space-y-2">
+                            {section.steps.map((step) => (
+                              <div key={step} className="text-xs text-white/70">
+                                {step}
+                              </div>
+                            ))}
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  ))}
+              </div>
+            )}
+
+            <div className="relative flex flex-col items-center py-10">
             {/* Connection Lines (SVG) */}
             <svg className="absolute inset-0 h-full w-full pointer-events-none opacity-20">
               {orderedNodes.slice(0, -1).map((node, i) => {
@@ -170,6 +225,7 @@ export default function Dashboard() {
                 />
               ))}
             </div>
+            </div>
           </div>
         </main>
 
@@ -194,6 +250,60 @@ export default function Dashboard() {
                 </div>
               ))}
             </div>
+          </div>
+
+          <div className="rounded-2xl border border-white/10 bg-surface p-6">
+            <div className="flex items-center justify-between mb-4">
+              <h2 className="text-sm font-bold uppercase tracking-widest text-white/40">Roadmaps</h2>
+              {currentTopics.length > 0 && (
+                <span className="text-[10px] font-bold text-gold/80">Studying {currentTopics.join(', ')}</span>
+              )}
+            </div>
+
+            {roadmaps.length === 0 && (
+              <p className="text-xs text-white/50">Roadmaps will appear here once your profile loads.</p>
+            )}
+
+            {roadmaps.length > 0 && (
+              <>
+                <div className="flex flex-wrap gap-2 mb-4">
+                  {roadmaps.map((topic) => (
+                    <button
+                      key={topic.topic}
+                      onClick={() => setActiveTopic(topic.topic)}
+                      className={`px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider transition-colors ${
+                        activeTopic === topic.topic
+                          ? 'bg-gold text-black-deep'
+                          : 'bg-white/5 text-white/60 hover:text-white'
+                      }`}
+                    >
+                      {topic.topic}
+                    </button>
+                  ))}
+                </div>
+
+                {roadmaps
+                  .filter((topic) => topic.topic === activeTopic)
+                  .map((topic) => (
+                    <div key={topic.topic} className="space-y-4">
+                      {topic.sections.map((section) => (
+                        <div key={section.title} className="rounded-xl border border-white/10 bg-black-deep/40 p-3">
+                          <p className="text-xs font-bold uppercase tracking-widest text-white/50 mb-2">
+                            {section.title}
+                          </p>
+                          <div className="space-y-1">
+                            {section.steps.map((step) => (
+                              <div key={step} className="text-xs text-white/70">
+                                {step}
+                              </div>
+                            ))}
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  ))}
+              </>
+            )}
           </div>
 
           <div className="rounded-2xl border border-primary/20 bg-primary/5 p-6 glow-gold">

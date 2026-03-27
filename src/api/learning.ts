@@ -69,6 +69,21 @@ export type CompletePayload = {
   message: string;
 };
 
+export type RoadmapSection = {
+  title: string;
+  steps: string[];
+};
+
+export type RoadmapTopic = {
+  topic: string;
+  sections: RoadmapSection[];
+};
+
+export type RoadmapPayload = {
+  topics: RoadmapTopic[];
+  currentTopics: string[];
+};
+
 export async function getDashboard() {
   return apiRequest<DashboardPayload>('/learning/dashboard', {}, true);
 }
@@ -96,4 +111,8 @@ export async function completeLesson(lessonId: string) {
     },
     true
   );
+}
+
+export async function getRoadmaps() {
+  return apiRequest<RoadmapPayload>('/learning/roadmaps', {}, true);
 }
