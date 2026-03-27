@@ -32,9 +32,9 @@ const Navbar = () => {
       <div className="max-w-7xl mx-auto px-6 flex items-center justify-between">
         <Link to="/" className="flex items-center gap-3 group cursor-pointer">
           <div className="w-11 h-11 rounded-2xl overflow-hidden bg-black-deep border border-gold/40 glow-gold group-hover:glow-gold-strong transition-all flex items-center justify-center">
-            <img src={rootsproutLogo} alt="Rootsprout logo" className="w-9 h-9 object-contain" />
+            <img src={rootsproutLogo} alt="Rootsprouthub logo" className="w-9 h-9 object-contain" />
           </div>
-          <span className="text-xl font-bold tracking-tight">Rootsprout</span>
+          <span className="text-xl font-bold tracking-tight">Rootsprouthub</span>
         </Link>
 
         <div className="hidden md:flex items-center gap-7">

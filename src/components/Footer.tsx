@@ -11,9 +11,9 @@ const Footer = () => {
           <div className="col-span-2">
             <div className="flex items-center gap-3 mb-6">
               <div className="w-9 h-9 rounded-xl overflow-hidden bg-black-deep border border-gold/40 flex items-center justify-center glow-gold">
-                <img src={rootsproutLogo} alt="Rootsprout logo" className="w-7 h-7 object-contain" />
+                <img src={rootsproutLogo} alt="Rootsprouthub logo" className="w-7 h-7 object-contain" />
               </div>
-              <span className="text-lg font-bold tracking-tight">Rootsprout</span>
+              <span className="text-lg font-bold tracking-tight">Rootsprouthub</span>
             </div>
             <p className="text-white/40 max-w-sm mb-8">
               Growing open source together. Join the world's most innovative community of developers and creators.
@@ -43,7 +43,7 @@ const Footer = () => {
           </div>
         </div>
         <div className="pt-8 border-t border-white/5 flex flex-col md:flex-row justify-between items-center gap-4 text-xs text-white/20">
-          <div>© 2026 Rootsprout. All rights reserved.</div>
+          <div>© 2026 Rootsprouthub. All rights reserved.</div>
           <div className="flex gap-8">
             <a href="#" className="hover:text-white transition-colors">Privacy Policy</a>
             <a href="#" className="hover:text-white transition-colors">Terms of Service</a>

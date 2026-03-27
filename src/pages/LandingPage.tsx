@@ -26,7 +26,7 @@ const Hero = () => {
             <span className="text-gradient-gold">Learn.</span>
           </h1>
           <p className="text-lg text-white/60 max-w-lg mb-10 leading-relaxed">
-            RootSprout is a free, open-source platform that helps students and developers build low-level systems from scratch to understand the internals of high-level production systems.
+            Rootsprouthub is a free, open-source platform that helps students and developers build low-level systems from scratch to understand the internals of high-level production systems.
           </p>
           <div className="flex flex-wrap gap-4">
             <Link to="/projects" className="bg-gold text-black-deep px-8 py-4 rounded-full font-bold flex items-center gap-2 glow-gold hover:glow-gold-strong transition-all group">
@@ -51,18 +51,18 @@ const Hero = () => {
                 <div className="w-3 h-3 rounded-full bg-yellow-500/50" />
                 <div className="w-3 h-3 rounded-full bg-green-500/50" />
               </div>
-              <div className="text-xs font-mono text-white/40">rootsprout --version 2.0.0</div>
+              <div className="text-xs font-mono text-white/40">rootsprouthub --version 2.0.0</div>
             </div>
             <div className="space-y-4 font-mono text-sm">
               <div className="flex gap-4">
                 <span className="text-gold">$</span>
-                <span className="text-white/80">npm install @rootsprout/core</span>
+                <span className="text-white/80">npm install @rootsprouthub/core</span>
               </div>
               <div className="text-white/40 pl-8">... installing dependencies</div>
               <div className="text-green-400 pl-8">✓ Success: Core engine initialized</div>
               <div className="flex gap-4">
                 <span className="text-gold">$</span>
-                <span className="text-white/80">rootsprout start --community</span>
+                <span className="text-white/80">rootsprouthub start --community</span>
               </div>
               <div className="text-gold/80 pl-8 animate-pulse">🚀 Launching ecosystem hub...</div>
             </div>
@@ -119,7 +119,7 @@ const LandingPage = () => {
         <div className="absolute inset-0 bg-[radial-gradient(circle_at_top,_rgba(250,204,21,0.1),_transparent_55%)] -z-10" />
         <div className="absolute inset-0 bg-[linear-gradient(to_bottom,_rgba(0,0,0,0.4),_rgba(0,0,0,0.9))] -z-10" />
         <div className="max-w-5xl mx-auto px-6 text-center">
-          <p className="text-sm uppercase tracking-[0.3em] text-white/50 mb-4">RootsproutHub Learning</p>
+          <p className="text-sm uppercase tracking-[0.3em] text-white/50 mb-4">Rootsprouthub Learning</p>
           <h2 className="text-3xl md:text-5xl lg:text-6xl font-black tracking-tight uppercase mb-4">
             MASTER <span className="text-gold">SYSTEMS</span>
             <span className="block">THROUGH PLAY.</span>
@@ -174,7 +174,7 @@ const LandingPage = () => {
         <div className="max-w-7xl mx-auto px-6">
           <div className="flex items-end justify-between mb-12">
             <div>
-              <h2 className="text-4xl font-bold mb-4">Rootsprout <span className="text-gold">Originals</span></h2>
+              <h2 className="text-4xl font-bold mb-4">Rootsprouthub <span className="text-gold">Originals</span></h2>
               <p className="text-white/60">Exclusive books and publications from our community.</p>
             </div>
             <Link to="/books" className="hidden md:flex items-center gap-2 text-gold font-bold hover:gap-3 transition-all">
@@ -328,7 +328,7 @@ const LandingPage = () => {
         <div className="max-w-7xl mx-auto px-6">
           <div className="text-center mb-16">
             <h2 className="text-4xl font-bold mb-4">Featured <span className="text-gold">Projects</span></h2>
-            <p className="text-white/60 max-w-2xl mx-auto">Discover high-impact open source projects maintained by the Rootsprout community.</p>
+            <p className="text-white/60 max-w-2xl mx-auto">Discover high-impact open source projects maintained by the Rootsprouthub community.</p>
           </div>
           <div className="grid md:grid-cols-3 gap-6">
             {PROJECTS.slice(0, 3).map((project) => (
@@ -427,7 +427,7 @@ const LandingPage = () => {
           <div className="glass rounded-[40px] p-8 md:p-12 border-gold/10 relative overflow-hidden">
             <div className="grid lg:grid-cols-2 gap-12 items-center relative z-10">
               <div className="text-center lg:text-left">
-                <h2 className="text-4xl md:text-5xl font-black mb-6 leading-tight">Join the <span className="text-gradient-gold">Rootsprout</span> <br className="hidden lg:block" />Revolution.</h2>
+                <h2 className="text-4xl md:text-5xl font-black mb-6 leading-tight">Join the <span className="text-gradient-gold">Rootsprouthub</span> <br className="hidden lg:block" />Revolution.</h2>
                 <p className="text-lg text-white/60 mb-10">Whether you're a seasoned maintainer or just starting your coding journey, there's a place for you in our growing ecosystem.</p>
                 <div className="flex flex-wrap gap-4 justify-center lg:justify-start">
                   <a
@@ -485,7 +485,7 @@ const LandingPage = () => {
               <div className="text-xs text-gold font-bold uppercase tracking-widest mb-3">Sponsorship</div>
               <h2 className="text-4xl font-bold mb-4">Support the next wave of builders</h2>
               <p className="text-white/60 mb-6">
-                Support Rootsprout and help power real-world systems education, community events, and open-source learning.
+                Support Rootsprouthub and help power real-world systems education, community events, and open-source learning.
               </p>
               <div className="flex flex-wrap gap-4">
                 <Link
@@ -507,7 +507,7 @@ const LandingPage = () => {
             <div className="glass border border-white/10 rounded-2xl overflow-hidden bg-black-soft/60">
               <div className="p-6">
                 <div className="text-sm text-white/60">Sponsorship</div>
-                <div className="text-xl font-bold mt-2">Support Rootsprout</div>
+                <div className="text-xl font-bold mt-2">Support Rootsprouthub</div>
               </div>
             </div>
           </div>

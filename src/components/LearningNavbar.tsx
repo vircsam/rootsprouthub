@@ -44,9 +44,9 @@ export default function LearningNavbar({
       <div className="mx-auto flex h-16 max-w-7xl items-center justify-between px-6">
         <Link to="/home" className="flex items-center gap-3 group">
           <div className="w-11 h-11 rounded-2xl overflow-hidden bg-black-deep border border-gold/40 glow-gold group-hover:glow-gold-strong transition-all flex items-center justify-center">
-            <img src={rootsproutLogo} alt="Rootsprout logo" className="w-9 h-9 object-contain" />
+            <img src={rootsproutLogo} alt="Rootsprouthub logo" className="w-9 h-9 object-contain" />
           </div>
-          <span className="text-xl font-bold tracking-tight">Rootsprout</span>
+          <span className="text-xl font-bold tracking-tight">Rootsprouthub</span>
         </Link>
 
         <div className="flex items-center gap-8">
