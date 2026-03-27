@@ -241,73 +241,35 @@ export default function Dashboard() {
         onSelectTopic={setActiveTopic}
       />
 
-      <div className="mx-auto grid max-w-[1280px] grid-cols-1 gap-12 px-6 py-12 lg:grid-cols-[260px,minmax(0,1fr)] lg:items-start">
-        <aside className="space-y-12 lg:pr-6">
-          <div>
-            <p className="text-[10px] font-bold uppercase tracking-widest text-white/30">Systems Architecture</p>
-            <div className="mt-5 space-y-1">
-              {roadmaps.length === 0 ? (
-                <div className="text-xs text-white/40">No roadmaps available</div>
-              ) : (
-                roadmaps.map((topic) => (
-                  <button
-                    key={topic.topic}
-                    onClick={() => setActiveTopic(topic.topic)}
-                    className={`group flex w-full items-center justify-between rounded-r-lg py-3 pl-4 pr-3 text-left text-sm font-semibold transition ${
-                      activeTopic === topic.topic
-                        ? 'border-l-2 border-gold bg-white/[0.03] text-gold'
-                        : 'border-l-2 border-transparent text-white/50 hover:bg-white/[0.02] hover:text-white'
-                    }`}
-                  >
-                    <span>{topicLabels[topic.topic as keyof typeof topicLabels] || topic.topic}</span>
-                    <span className="text-white/20 transition group-hover:text-white/40">›</span>
-                  </button>
-                ))
-              )}
+      <div className="grid gap-8 md:grid-cols-[1fr,2fr,1fr] px-6 py-6 max-w-[1280px] mx-auto">
+        <div className="hidden md:block" />
+
+        <div className="p-8 mx-auto w-full max-w-3xl">
+          <div className="w-full text-center mx-auto">
+            <div className="mb-6">
+              <p className="text-[10px] font-bold uppercase tracking-widest text-gold">System Architecture</p>
+              <div className="mt-3 flex flex-wrap justify-center gap-2 text-[11px] font-semibold text-gold">
+                {displaySections.length === 0 ? (
+                  <span className="rounded-full border border-gold/50 bg-black-soft/70 px-3 py-1 text-gold/70">
+                    No sections yet
+                  </span>
+                ) : (
+                  displaySections.map((section) => (
+                    <span
+                      key={section.title}
+                      className="rounded-full border border-gold/50 bg-black-soft/70 px-3 py-1 text-gold/80"
+                    >
+                      {section.title}
+                    </span>
+                  ))
+                )}
+              </div>
             </div>
+            <h1 className="text-[3.25rem] font-extrabold tracking-tight text-white leading-tight">{roadmapTitle}</h1>
+            <p className="mt-4 text-xl text-white/50 leading-relaxed max-w-[640px] mx-auto">{topicSummary}</p>
           </div>
 
-          <div className="rounded-[1.5rem] bg-[#121212] p-6 shadow-2xl">
-            <p className="text-[10px] font-bold uppercase tracking-widest text-white/30">Profile Tier</p>
-            <div className="mt-4 flex items-center justify-between">
-              <h3 className="text-lg font-bold text-gold">Lvl {stats.level} Architect</h3>
-              <div className="flex text-gold">
-                 <BadgeCheck size={24} fill="currentColor" stroke="#121212" strokeWidth={1.5} />
-              </div>
-            </div>
-            <div className="mt-6">
-              <div className="flex items-center justify-between text-[10px] font-bold uppercase tracking-widest text-white/40">
-                <span>XP Progress</span>
-                <span className="text-white/60">
-                  {stats.totalXP.toLocaleString()} / {(stats.totalXP + stats.xpToNext).toLocaleString()}
-                </span>
-              </div>
-              <div className="mt-2 h-1.5 w-full overflow-hidden rounded-full bg-white/5 border border-white/5">
-                <div className="h-full rounded-full bg-gold shadow-[0_0_10px_rgba(255,195,0,0.5)]" style={{ width: `${xpProgress}%` }} />
-              </div>
-            </div>
-            <div className="mt-8 flex justify-between text-center">
-              <div>
-                <p className="text-[10px] font-bold uppercase tracking-widest text-white/30">Modules</p>
-                <p className="mt-1 text-base font-bold text-white">
-                  {topicCompletion.completed}/{topicCompletion.total}
-                </p>
-              </div>
-              <div>
-                <p className="text-[10px] font-bold uppercase tracking-widest text-white/30">Rank</p>
-                <p className="mt-1 text-base font-bold text-white">Top 2%</p>
-              </div>
-            </div>
-          </div>
-        </aside>
-
-        <main className="flex flex-col lg:pl-10">
-          <div className="w-full max-w-3xl text-left">
-            <h1 className="text-[2.75rem] font-extrabold tracking-tight text-white leading-tight">{roadmapTitle}</h1>
-            <p className="mt-4 text-lg text-white/50 leading-relaxed max-w-[600px]">{topicSummary}</p>
-          </div>
-
-          <div className="relative mt-20 w-full max-w-4xl">
+          <div className="relative mt-10 w-full max-w-4xl mx-auto">
             <div 
               className="absolute left-1/2 top-0 h-[calc(100%-80px)] w-px -translate-x-1/2" 
               style={{
@@ -347,10 +309,10 @@ export default function Dashboard() {
                         const alignLeft = index % 2 === 0;
 
                         return (
-                          <div
-                            key={node.id}
-                            className={`relative flex w-full ${alignLeft ? 'md:justify-end' : 'md:justify-start'}`}
-                          >
+                        <div
+                          key={node.id}
+                          className={`relative flex w-full ${alignLeft ? 'md:justify-end' : 'md:justify-start'}`}
+                        >
                             <button
                               onClick={() => !isLocked && handleNodeClick(node)}
                               className={`group relative w-full max-w-[340px] transition-transform ${!isLocked && 'hover:scale-[1.02]'}`}
@@ -392,23 +354,17 @@ export default function Dashboard() {
                                     {description}
                                   </p>
                                   {isActive && (
-                                    <div className={`mt-3 flex items-center gap-2 text-[10px] font-bold uppercase tracking-widest text-gold`}>
-                                      {alignLeft ? (
-                                        <>
-                                          <span className="h-1.5 w-1.5 rounded-full bg-gold shadow-[0_0_8px_rgba(255,195,0,1)]" />
-                                          ACTIVE MODULE
-                                        </>
-                                      ) : (
-                                        <>
-                                          ACTIVE MODULE
-                                          <span className="h-1.5 w-1.5 rounded-full bg-gold shadow-[0_0_8px_rgba(255,195,0,1)]" />
-                                        </>
-                                      )}
-                                    </div>
+                                    <div className="mt-3 hidden md:block" />
                                   )}
                                 </div>
                               </div>
                             </button>
+                            {isActive && (
+                              <div className="absolute left-1/2 top-full mt-4 -translate-x-1/2 text-[10px] font-bold uppercase tracking-widest text-gold">
+                                ACTIVE MODULE
+                                <span className="ml-2 inline-block h-1.5 w-1.5 rounded-full bg-gold shadow-[0_0_8px_rgba(255,195,0,1)]" />
+                              </div>
+                            )}
                           </div>
                         );
                       })}
@@ -418,7 +374,9 @@ export default function Dashboard() {
               })}
             </div>
           </div>
-        </main>
+        </div>
+
+        <div className="hidden md:block" />
       </div>
     </div>
   );
