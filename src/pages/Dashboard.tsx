@@ -230,7 +230,7 @@ export default function Dashboard() {
             </div>
           )}
 
-          <div className="rounded-2xl border border-white/10 bg-surface p-6">
+          {/* <div className="rounded-2xl border border-white/10 bg-surface p-6">
             <h2 className="mb-4 text-sm font-bold uppercase tracking-widest text-white/40">Daily Goals</h2>
             <div className="space-y-4">
               {goals.map((goal, i) => (
@@ -249,7 +249,7 @@ export default function Dashboard() {
                 </div>
               ))}
             </div>
-          </div>
+          </div> */}
 
           <div className="rounded-2xl border border-white/10 bg-surface p-6">
             <h2 className="mb-4 text-sm font-bold uppercase tracking-widest text-white/40">Your Progress</h2>
@@ -329,7 +329,7 @@ export default function Dashboard() {
                     Currently studying: {currentTopics.join(', ') || activeTopic || 'Getting started'}
                   </p>
                 </div>
-                <div className="mt-5 rounded-2xl border border-white/10 bg-black-deep/60 p-4">
+                {/* <div className="mt-5 rounded-2xl border border-white/10 bg-black-deep/60 p-4">
                   <h3 className="mb-3 text-[11px] font-bold uppercase tracking-widest text-white/50">Daily Goals</h3>
                   <div className="space-y-3">
                     {goals.map((goal, i) => (
@@ -348,7 +348,7 @@ export default function Dashboard() {
                       </div>
                     ))}
                   </div>
-                </div>
+                </div> */}
                 </div>
               </div>
             )}
