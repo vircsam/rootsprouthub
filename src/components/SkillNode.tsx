@@ -20,7 +20,7 @@ const SkillNode: FC<SkillNodeProps> = ({ node, onClick, isLast }) => {
       initial={{ scale: 0.8, opacity: 0 }}
       animate={{ scale: 1, opacity: 1 }}
       whileHover={{ scale: 1.05 }}
-      className="relative flex flex-col items-center gap-3"
+      className="relative flex flex-col items-center gap-3 scale-90 md:scale-100"
       style={{
         gridColumn: `span 1`,
         transform: `translate(${node.position.x}px, ${node.position.y}px)`

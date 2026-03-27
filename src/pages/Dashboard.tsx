@@ -32,6 +32,7 @@ export default function Dashboard() {
   const [roadmaps, setRoadmaps] = useState<RoadmapTopic[]>([]);
   const [currentTopics, setCurrentTopics] = useState<string[]>([]);
   const [activeTopic, setActiveTopic] = useState<string>('');
+  const [streakMonth, setStreakMonth] = useState<{ year: number; month: number; days: { date: string; completed: boolean }[] } | null>(null);
   const navigate = useNavigate();
 
   const handleNodeClick = (node: Node) => {
@@ -61,6 +62,7 @@ export default function Dashboard() {
         setUser(data.user);
         setGoals(data.goals.length ? data.goals : DEFAULT_GOALS);
         setAchievements(data.achievements.length ? data.achievements.map((a) => a.id) : [1, 2, 3, 4, 5]);
+        setStreakMonth(data.streak ?? null);
       })
       .catch((err) => {
         if (err instanceof Error && err.message === 'unauthorized') {
@@ -71,6 +73,7 @@ export default function Dashboard() {
         setUser(null);
         setGoals(DEFAULT_GOALS);
         setAchievements([1, 2, 3, 4, 5]);
+        setStreakMonth(null);
       });
 
     getRoadmaps()
@@ -218,6 +221,20 @@ export default function Dashboard() {
     return roadmapSections.map((section) => section.title);
   }, [roadmaps, activeTopic, roadmapSections]);
 
+  const streakLabel = useMemo(() => {
+    if (!streakMonth) return '';
+    return new Date(streakMonth.year, streakMonth.month - 1, 1).toLocaleString('default', {
+      month: 'long',
+      year: 'numeric',
+    });
+  }, [streakMonth]);
+
+  const streakGrid = useMemo(() => {
+    if (!streakMonth) return { blanks: 0, days: [] as { date: string; completed: boolean }[] };
+    const firstDayIndex = new Date(streakMonth.year, streakMonth.month - 1, 1).getDay();
+    return { blanks: firstDayIndex, days: streakMonth.days };
+  }, [streakMonth]);
+
   const xpProgress = Math.min(
     100,
     Math.round((stats.totalXP / Math.max(1, stats.totalXP + stats.xpToNext)) * 100)
@@ -307,8 +324,8 @@ export default function Dashboard() {
         </aside>
 
         {/* Main Content - Skill Tree */}
-        <main className="lg:col-start-4 lg:col-span-6">
-          <div className="relative flex flex-col items-center py-2 md:py-12">
+        <main className="lg:col-start-5 lg:col-span-5">
+          <div className="relative flex flex-col items-center py-2 md:py-12 lg:pl-6">
             {isMobile && user && (
               <div className="w-full max-w-md mb-8">
                 <h2 className="mb-2 text-2xl font-bold text-white">
@@ -416,19 +433,59 @@ export default function Dashboard() {
         </main>
 
         {/* Right Sidebar */}
-        <aside className="hidden lg:block lg:col-start-10 lg:col-span-3">
-          <div className="rounded-2xl border border-white/10 bg-surface p-6">
-            <h2 className="mb-4 text-sm font-bold uppercase tracking-widest text-white/40">Roadmap</h2>
-            <div className="space-y-2">
+        <aside className="hidden lg:flex lg:col-start-10 lg:col-span-3 lg:justify-end">
+          <div className="w-full max-w-[260px] space-y-6 translate-x-10">
+            <div className="rounded-2xl border border-gold/20 bg-gradient-to-b from-black-deep/90 via-black-deep/70 to-black-deep/50 p-6 shadow-[0_18px_50px_rgba(0,0,0,0.45)]">
+            <h2 className="mb-4 text-sm font-bold uppercase tracking-widest text-gold/90">Roadmap</h2>
+            <div className="space-y-3">
               {roadmapSidebarSections.length === 0 ? (
                 <div className="text-xs text-white/50">No sections yet</div>
               ) : (
                 roadmapSidebarSections.map((title) => (
-                  <div key={title} className="text-xs font-bold uppercase tracking-widest text-white/70">
+                  <div
+                    key={title}
+                    className="rounded-lg border border-white/10 bg-white/5 px-3 py-2 text-[11px] font-bold uppercase tracking-widest text-white/80"
+                  >
                     {title}
                   </div>
                 ))
               )}
+            </div>
+            </div>
+
+            <div className="rounded-2xl border border-emerald-400/30 bg-gradient-to-b from-black-deep/90 via-black-deep/70 to-black-deep/50 p-6 shadow-[0_18px_45px_rgba(0,0,0,0.45)]">
+              <div className="mb-4 flex items-center justify-between">
+                <h2 className="text-sm font-bold uppercase tracking-widest text-emerald-300">Streak</h2>
+                <span className="text-[10px] font-bold uppercase tracking-widest text-emerald-200/80">
+                  {streakMonth?.days.filter((day) => day.completed).length ?? 0} Days
+                </span>
+              </div>
+              <p className="mb-3 text-[11px] font-bold uppercase tracking-widest text-emerald-200/80">
+                {streakLabel || 'This Month'}
+              </p>
+              <div className="grid grid-cols-7 gap-1">
+                {Array.from({ length: streakGrid.blanks }).map((_, index) => (
+                  <div key={`blank-${index}`} className="h-4 w-4" />
+                ))}
+                {streakGrid.days.map((day) => {
+                  const dayNumber = Number(day.date.split('-')[2]);
+                  return (
+                    <div
+                      key={day.date}
+                      className={`h-4 w-4 rounded-[4px] border ${
+                        day.completed
+                          ? 'border-emerald-300/60 bg-emerald-400/90 shadow-[0_0_10px_rgba(16,185,129,0.55)]'
+                          : 'border-white/10 bg-white/5'
+                      }`}
+                    >
+                      <span className="sr-only">{dayNumber}</span>
+                    </div>
+                  );
+                })}
+              </div>
+              <p className="mt-3 text-[10px] uppercase tracking-widest text-emerald-200/70">
+                Updates when you complete a node
+              </p>
             </div>
           </div>
         </aside>

@@ -38,6 +38,11 @@ export type DashboardPayload = {
   stats: LearningStats;
   goals: DailyGoal[];
   achievements: Achievement[];
+  streak: {
+    year: number;
+    month: number;
+    days: { date: string; completed: boolean }[];
+  };
 };
 
 export type Lesson = {
