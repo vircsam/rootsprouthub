@@ -223,11 +223,12 @@ export default function Dashboard() {
             <div>
               <h2 className="mb-3 text-xl font-bold text-white">Welcome back, {user.name}!</h2>
               <div className="rounded-2xl border border-white/10 bg-surface p-6">
+                <p className="text-sm text-white/50">{user.email}</p>
                 <div className="flex items-center justify-between text-xs text-white/60">
-                <span>Currently studying</span>
-                <span className="text-gold/80">{currentTopics.join(', ') || activeTopic || 'Getting started'}</span>
+                  <span>Currently studying</span>
+                  <span className="text-gold/80">{currentTopics.join(', ') || activeTopic || 'Getting started'}</span>
+                </div>
               </div>
-            </div>
             </div>
           )}
 
@@ -290,7 +291,7 @@ export default function Dashboard() {
 
         {/* Main Content - Skill Tree */}
         <main className="lg:col-span-6">
-          <div className="relative flex flex-col items-center py-20">
+          <div className="relative flex flex-col items-center py-4 md:py-20">
             {isMobile && user && (
               <div className="w-full max-w-md mb-8">
                 <h2 className="mb-2 text-2xl font-bold text-white">
