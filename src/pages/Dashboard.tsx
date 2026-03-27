@@ -293,7 +293,7 @@ export default function Dashboard() {
                       </div>
                     </div>
 
-                    <div className="mt-16 grid gap-y-16 md:grid-cols-2 md:gap-x-16 lg:gap-x-28">
+                    <div className="mt-16 grid gap-y-16 md:grid-cols-1">
                       {(section.nodes.length ? section.nodes : []).map((node, index) => {
                         const isLocked = node.status === 'locked';
                         const isCompleted = node.status === 'completed';
@@ -311,36 +311,36 @@ export default function Dashboard() {
                         return (
                         <div
                           key={node.id}
-                          className={`relative flex w-full ${alignLeft ? 'md:justify-end' : 'md:justify-start'}`}
+                          className={`relative flex w-full ${alignLeft ? 'justify-start md:-translate-x-10' : 'justify-end md:translate-x-10'}`}
                         >
                             <button
                               onClick={() => !isLocked && handleNodeClick(node)}
                               className={`group relative w-full max-w-[520px] transition-transform ${!isLocked && 'hover:scale-[1.02]'}`}
                               disabled={isLocked}
                             >
-                              <div className={`flex items-center gap-6 ${alignLeft ? 'flex-row-reverse' : 'flex-row'}`}>
+                              <div className={`flex items-center gap-3 ${alignLeft ? 'flex-row-reverse' : 'flex-row'}`}>
                                 
                                 <div className="relative z-10 flex shrink-0">
                                   <div
-                                    className={`flex h-12 w-12 md:h-14 md:w-14 items-center justify-center rounded-[1rem] transition ${
+                                    className={`flex h-16 w-16 md:h-20 md:w-20 items-center justify-center rounded-[1.2rem] transition ${
                                       isCompleted
                                         ? 'bg-gold text-black shadow-[0_0_20px_rgba(255,195,0,0.4)]'
                                         : isLocked
                                           ? 'border border-white/5 bg-[#121212] text-white/20'
-                                          : 'border border-gold bg-black-deep text-gold shadow-[0_0_15px_rgba(255,195,0,0.15)]'
+                                        : 'border border-gold bg-black-deep text-gold shadow-[0_0_15px_rgba(255,195,0,0.15)]'
                                     }`}
                                   >
                                     {isLocked ? (
-                                      <Lock size={18} strokeWidth={2.5} />
+                                      <Lock size={22} strokeWidth={2.5} />
                                     ) : isCompleted ? (
-                                      <Check size={22} strokeWidth={3} />
+                                      <Check size={30} strokeWidth={3} />
                                     ) : (
-                                      <Play size={18} fill="currentColor" />
+                                      <Play size={22} fill="currentColor" />
                                     )}
                                   </div>
                                 </div>
                                 
-                                <div className={`flex flex-col ${alignLeft ? 'items-end text-right' : 'items-start text-left'} ${alignLeft ? 'md:mr-8' : 'md:ml-8'} max-w-[380px] md:max-w-[460px]`}>
+                                <div className="flex flex-col items-start text-left max-w-[380px] md:max-w-[460px]">
                                   <h4 className={`text-lg md:text-2xl font-bold ${isLocked ? 'text-white/30' : 'text-white/90'}`}>
                                     {displayTitle}
                                   </h4>
