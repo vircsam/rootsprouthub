@@ -30,7 +30,7 @@ const SkillNode: FC<SkillNodeProps> = ({ node, onClick, isLast }) => {
         onClick={() => !isLocked && onClick(node)}
         disabled={isLocked}
         className={cn(
-          "relative flex h-24 w-24 items-center justify-center rounded-full border-4 transition-all duration-300 shadow-[0_10px_25px_rgba(0,0,0,0.45)] hover:-translate-y-1",
+          "relative flex h-32 w-32 items-center justify-center rounded-full border-4 transition-all duration-300 shadow-[0_12px_30px_rgba(0,0,0,0.45)] hover:-translate-y-1",
           isLocked 
             ? "border-white/10 bg-white/5 text-white/20 cursor-not-allowed" 
             : isCompleted
@@ -39,31 +39,31 @@ const SkillNode: FC<SkillNodeProps> = ({ node, onClick, isLast }) => {
         )}
       >
         {isLocked ? (
-          <Lock size={24} />
+          <Lock size={28} />
         ) : isCompleted ? (
-          <Flag size={24} />
+          <Flag size={28} />
         ) : (
-          <Play size={24} fill="currentColor" className="ml-1" />
+          <Play size={28} fill="currentColor" className="ml-1" />
         )}
 
         {!isLocked && !isCompleted && (
-          <svg className="absolute -inset-2 h-28 w-28 -rotate-90">
+          <svg className="absolute -inset-3 h-36 w-36 -rotate-90">
             <circle
-              cx="56"
-              cy="56"
-              r="52"
+              cx="72"
+              cy="72"
+              r="66"
               fill="none"
               stroke="currentColor"
               strokeWidth="4"
-              strokeDasharray={2 * Math.PI * 52}
-              strokeDashoffset={2 * Math.PI * 52 * (1 - node.progress / 100)}
+              strokeDasharray={2 * Math.PI * 66}
+              strokeDashoffset={2 * Math.PI * 66 * (1 - node.progress / 100)}
               className="text-primary/20"
             />
           </svg>
         )}
 
         {isActive && (
-          <span className="absolute -inset-3 rounded-full border border-primary/40 animate-pulse" />
+          <span className="absolute -inset-4 rounded-full border border-primary/40 animate-pulse" />
         )}
       </button>
 
@@ -81,7 +81,7 @@ const SkillNode: FC<SkillNodeProps> = ({ node, onClick, isLast }) => {
           {node.topic}
         </span>
         <h3 className={cn(
-          "text-sm font-bold",
+          "text-base font-bold",
           isLocked ? "text-white/20" : "text-white"
         )}>
           {node.title}

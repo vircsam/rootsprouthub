@@ -4,7 +4,7 @@ import { useNavigate } from 'react-router-dom';
 import SkillNode from '../components/SkillNode';
 import LearningNavbar from '../components/LearningNavbar';
 import { Node } from '../types';
-import { Trophy, Target, Star, BookOpen } from 'lucide-react';
+import { Trophy, Target, Star } from 'lucide-react';
 import { getDashboard, getRoadmaps, type RoadmapTopic } from '../api/learning';
 
 const INITIAL_NODES: Node[] = [
@@ -165,7 +165,7 @@ export default function Dashboard() {
 
       const nodes = [...baseNodes, ...placeholders].map((node, index) => {
         const xOffset = isMobile ? 0 : index % 2 === 0 ? -80 : 80;
-        const yOffset = index * 140;
+        const yOffset = index * 190;
         return {
           ...node,
           position: { x: xOffset, y: yOffset },
@@ -198,6 +198,25 @@ export default function Dashboard() {
     const progress = topicProgress[activeTopic] || { total: 0, completed: 0 };
     return progress;
   }, [activeTopic, topicProgress]);
+
+  const roadmapTitle = useMemo(() => {
+    const labelMap: Record<string, string> = {
+      OS: 'Operating Systems',
+      DB: 'Databases',
+      Networking: 'Networking',
+      'Distributed Systems': 'Distributed Systems',
+      'System Design': 'System Design',
+    };
+    return labelMap[activeTopic] || activeTopic || 'Roadmap';
+  }, [activeTopic]);
+
+  const roadmapSidebarSections = useMemo(() => {
+    const activeRoadmap = roadmaps.find((topic) => topic.topic === activeTopic);
+    if (activeRoadmap && activeRoadmap.sections.length > 0) {
+      return activeRoadmap.sections.map((section) => section.title);
+    }
+    return roadmapSections.map((section) => section.title);
+  }, [roadmaps, activeTopic, roadmapSections]);
 
   const xpProgress = Math.min(
     100,
@@ -288,8 +307,8 @@ export default function Dashboard() {
         </aside>
 
         {/* Main Content - Skill Tree */}
-        <main className="lg:col-span-6">
-          <div className="relative flex flex-col items-center py-4 md:py-20">
+        <main className="lg:col-start-4 lg:col-span-6">
+          <div className="relative flex flex-col items-center py-2 md:py-12">
             {isMobile && user && (
               <div className="w-full max-w-md mb-8">
                 <h2 className="mb-2 text-2xl font-bold text-white">
@@ -353,14 +372,16 @@ export default function Dashboard() {
               </div>
             )}
             <div className="relative z-10 flex w-full max-w-md flex-col items-center gap-6">
+              <div className="text-center text-3xl font-bold uppercase tracking-widest text-gold">
+                {roadmapTitle}
+              </div>
               {layoutSections.map((section, sectionIndex) => (
                 <div key={section.title} className="w-full flex flex-col items-center relative">
-                  <div className="mb-16 text-xl font-bold uppercase tracking-widest text-white/85">
+                  <div className="mb-16 text-2xl font-bold uppercase tracking-widest text-gold">
                     {section.title}
                   </div>
                   {(() => {
-                    const rowHeight = 130;
-                    const slantOffset = 18;
+                    const slantOffset = 22;
                     const direction = sectionIndex % 2 === 0 ? -1 : 1;
                     return (
                       <div className="relative w-full max-w-[300px] px-4 md:px-0">
@@ -368,7 +389,7 @@ export default function Dashboard() {
                           {section.nodes.map((node, index) => (
                             <div
                               key={node.id}
-                              className="flex w-full h-[130px] items-center justify-center"
+                              className="flex w-full h-[170px] items-center justify-center"
                               style={{ transform: `translateX(${index * slantOffset * direction}px)` }}
                             >
                               <SkillNode
@@ -395,51 +416,20 @@ export default function Dashboard() {
         </main>
 
         {/* Right Sidebar */}
-        <aside className="hidden lg:block lg:col-span-3 space-y-6">
-
-          {roadmaps.length > 0 && activeTopic && (
-            <div className="rounded-2xl border border-white/10 bg-surface p-6">
-              <div className="flex items-center justify-between mb-4">
-                <h2 className="text-sm font-bold uppercase tracking-widest text-white/40">Roadmap</h2>
-                {currentTopics.length > 0 && (
-                  <span className="text-[10px] font-bold text-gold/80">Studying {currentTopics.join(', ')}</span>
-                )}
-              </div>
-
-              {roadmaps
-                .filter((topic) => topic.topic === activeTopic)
-                .map((topic) => (
-                  <div key={topic.topic} className="space-y-4">
-                    <div className="text-xs font-bold uppercase tracking-widest text-white/40">
-                      {topic.topic}
-                    </div>
-                    {topic.sections.map((section) => (
-                      <div key={section.title} className="rounded-xl border border-white/10 bg-black-deep/40 p-3">
-                        <p className="text-xs font-bold uppercase tracking-widest text-white/50 mb-2">
-                          {section.title}
-                        </p>
-                        <div className="space-y-1">
-                          {section.steps.map((step) => (
-                            <div key={step} className="text-xs text-white/70">
-                              {step}
-                            </div>
-                          ))}
-                        </div>
-                      </div>
-                    ))}
+        <aside className="hidden lg:block lg:col-start-10 lg:col-span-3">
+          <div className="rounded-2xl border border-white/10 bg-surface p-6">
+            <h2 className="mb-4 text-sm font-bold uppercase tracking-widest text-white/40">Roadmap</h2>
+            <div className="space-y-2">
+              {roadmapSidebarSections.length === 0 ? (
+                <div className="text-xs text-white/50">No sections yet</div>
+              ) : (
+                roadmapSidebarSections.map((title) => (
+                  <div key={title} className="text-xs font-bold uppercase tracking-widest text-white/70">
+                    {title}
                   </div>
-                ))}
+                ))
+              )}
             </div>
-          )}
-
-          <div className="rounded-2xl border border-primary/20 bg-primary/5 p-6 glow-gold">
-            <div className="mb-4 flex h-10 w-10 items-center justify-center rounded-xl bg-primary text-background">
-              <BookOpen size={20} />
-            </div>
-            <h3 className="mb-2 font-bold text-primary">Pro Tip</h3>
-            <p className="text-xs text-white/60 leading-relaxed">
-              Mastering indexing can speed up your database queries by up to 100x. Try the "B-Tree Visualization" challenge!
-            </p>
           </div>
         </aside>
       </div>
