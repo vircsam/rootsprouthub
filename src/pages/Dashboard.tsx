@@ -241,23 +241,23 @@ export default function Dashboard() {
         onSelectTopic={setActiveTopic}
       />
 
-      <div className="grid gap-8 md:grid-cols-[1fr,2fr,1fr] px-6 py-6 max-w-[1280px] mx-auto">
+      <div className="grid gap-8 md:grid-cols-[1fr,2fr,1fr] px-6 py-6 max-w-[1440px] mx-auto">
         <div className="hidden md:block" />
 
-        <div className="p-8 mx-auto w-full max-w-3xl">
+        <div className="p-8 mx-auto w-full max-w-[1100px]">
           <div className="w-full text-center mx-auto">
-            <div className="mb-6">
-              <p className="text-[10px] font-bold uppercase tracking-widest text-gold">System Architecture</p>
-              <div className="mt-3 flex flex-wrap justify-center gap-2 text-[11px] font-semibold text-gold">
+            <div className="mb-10">
+              <p className="text-sm font-bold uppercase tracking-widest text-gold">System Architecture</p>
+              <div className="mt-5 flex flex-wrap justify-center gap-4 text-base font-semibold text-gold">
                 {displaySections.length === 0 ? (
-                  <span className="rounded-full border border-gold/50 bg-black-soft/70 px-3 py-1 text-gold/70">
+                  <span className="rounded-full border border-gold/50 bg-black-soft/70 px-5 py-2 text-gold/70">
                     No sections yet
                   </span>
                 ) : (
                   displaySections.map((section) => (
                     <span
                       key={section.title}
-                      className="rounded-full border border-gold/50 bg-black-soft/70 px-3 py-1 text-gold/80"
+                      className="rounded-full border border-gold/50 bg-black-soft/70 px-5 py-2 text-gold/80"
                     >
                       {section.title}
                     </span>
@@ -266,10 +266,10 @@ export default function Dashboard() {
               </div>
             </div>
             <h1 className="text-[3.25rem] font-extrabold tracking-tight text-white leading-tight">{roadmapTitle}</h1>
-            <p className="mt-4 text-xl text-white/50 leading-relaxed max-w-[640px] mx-auto">{topicSummary}</p>
+            <p className="mt-4 text-xl text-white/50 leading-relaxed max-w-[640px] mx-auto" />
           </div>
 
-          <div className="relative mt-10 w-full max-w-4xl mx-auto">
+          <div className="relative mt-10 w-full max-w-[1100px] mx-auto">
             <div 
               className="absolute left-1/2 top-0 h-[calc(100%-80px)] w-px -translate-x-1/2" 
               style={{
@@ -284,7 +284,7 @@ export default function Dashboard() {
                 return (
                   <div key={section.title} className="relative">
                     <div className="flex justify-center relative z-10">
-                      <div className={`inline-flex items-center gap-3 rounded-md border px-5 py-2.5 text-[11px] font-bold uppercase tracking-widest ${
+                      <div className={`inline-flex items-center gap-3 rounded-md border px-7 py-3.5 text-sm font-bold uppercase tracking-widest ${
                         sectionActiveOrCompleted
                           ? 'border-gold/30 bg-[#1a1a14] text-gold shadow-[0_0_20px_rgba(255,195,0,0.15)]'
                           : 'border-transparent bg-[#121212] text-white/30'
@@ -293,7 +293,7 @@ export default function Dashboard() {
                       </div>
                     </div>
 
-                    <div className="mt-16 grid gap-y-16 md:grid-cols-2 md:gap-x-12 lg:gap-x-16">
+                    <div className="mt-16 grid gap-y-16 md:grid-cols-2 md:gap-x-16 lg:gap-x-28">
                       {(section.nodes.length ? section.nodes : []).map((node, index) => {
                         const isLocked = node.status === 'locked';
                         const isCompleted = node.status === 'completed';
@@ -315,14 +315,14 @@ export default function Dashboard() {
                         >
                             <button
                               onClick={() => !isLocked && handleNodeClick(node)}
-                              className={`group relative w-full max-w-[340px] transition-transform ${!isLocked && 'hover:scale-[1.02]'}`}
+                              className={`group relative w-full max-w-[520px] transition-transform ${!isLocked && 'hover:scale-[1.02]'}`}
                               disabled={isLocked}
                             >
                               <div className={`flex items-center gap-6 ${alignLeft ? 'flex-row-reverse' : 'flex-row'}`}>
                                 
                                 <div className="relative z-10 flex shrink-0">
                                   <div
-                                    className={`flex h-12 w-12 items-center justify-center rounded-[0.85rem] transition ${
+                                    className={`flex h-12 w-12 md:h-14 md:w-14 items-center justify-center rounded-[1rem] transition ${
                                       isCompleted
                                         ? 'bg-gold text-black shadow-[0_0_20px_rgba(255,195,0,0.4)]'
                                         : isLocked
@@ -338,19 +338,13 @@ export default function Dashboard() {
                                       <Play size={18} fill="currentColor" />
                                     )}
                                   </div>
-                                  
-                                  <span
-                                    className={`absolute top-1/2 -translate-y-1/2 hidden h-px w-6 lg:w-8 md:block ${
-                                      isCompleted ? 'bg-gold' : isActive ? 'bg-gold/40' : 'bg-white/10'
-                                    } ${alignLeft ? '-right-6 lg:-right-8' : '-left-6 lg:-left-8'}`}
-                                  />
                                 </div>
                                 
-                                <div className={`flex flex-col ${alignLeft ? 'items-end text-right' : 'items-start text-left'}`}>
-                                  <h4 className={`text-lg font-bold ${isLocked ? 'text-white/30' : 'text-white/90'}`}>
+                                <div className={`flex flex-col ${alignLeft ? 'items-end text-right' : 'items-start text-left'} ${alignLeft ? 'md:mr-8' : 'md:ml-8'} max-w-[380px] md:max-w-[460px]`}>
+                                  <h4 className={`text-lg md:text-2xl font-bold ${isLocked ? 'text-white/30' : 'text-white/90'}`}>
                                     {displayTitle}
                                   </h4>
-                                  <p className={`mt-1.5 text-[13px] leading-relaxed ${isLocked ? 'text-white/20' : 'text-white/50'}`}>
+                                  <p className={`mt-2 text-sm md:text-base leading-relaxed ${isLocked ? 'text-white/20' : 'text-white/50'}`}>
                                     {description}
                                   </p>
                                   {isActive && (
