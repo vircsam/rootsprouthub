@@ -58,6 +58,9 @@ export default function LessonPage() {
   const stepOptions = Array.isArray(currentStep?.options) ? currentStep?.options : [];
   const isTerminalStep = stepType === 'terminal';
   const isMentalModelStep = currentStep?.uiHint === 'visual_mapping';
+  const isCenteredStep = ['decision_cards', 'mcq', 'completion_reward'].includes(currentStep?.uiHint || '');
+  const hideTerminal = isMentalModelStep || isCenteredStep;
+  const centerContent = isCenteredStep;
   const canContinue = true;
 
   useEffect(() => {
@@ -239,11 +242,16 @@ export default function LessonPage() {
         </div>
       </header>
 
-      <main className={cn("flex flex-1 flex-col md:flex-row md:overflow-hidden", isMentalModelStep && "md:flex-col")}>
+      <main
+        className={cn(
+          "flex flex-1 flex-col md:flex-row md:overflow-hidden",
+          (isMentalModelStep || hideTerminal) && "md:flex-col"
+        )}
+      >
         <section
           className={cn(
             "flex w-full flex-col border-b border-white/10 p-6 md:border-b-0 md:p-10 overflow-y-auto",
-            isMentalModelStep ? "md:w-full md:border-r-0" : "md:w-[55%] md:border-r"
+            (isMentalModelStep || hideTerminal) ? "md:w-full md:border-r-0" : "md:w-[55%] md:border-r"
           )}
         >
           {!isLoading && steps.length > 0 && (
@@ -256,7 +264,9 @@ export default function LessonPage() {
                 className="space-y-8"
               >
                 <div className="space-y-2">
-                  <span className="text-xs font-bold uppercase tracking-widest text-primary">Step {activeStep + 1} of {steps.length}</span>
+                  <span className="text-xs font-bold uppercase tracking-widest text-primary">
+                    Step {activeStep + 1} of {steps.length}
+                  </span>
                   <h1 className="text-4xl font-black tracking-tight">{steps[activeStep].title}</h1>
                   {steps[activeStep].uiHint && (
                     <span className="inline-flex rounded-full border border-primary/30 bg-primary/10 px-3 py-1 text-[10px] font-bold uppercase tracking-widest text-primary">
@@ -274,13 +284,18 @@ export default function LessonPage() {
                 ) : steps[activeStep].uiHint === 'bullet_points' ? (
                   <CoreConceptCard content={steps[activeStep].content} />
                 ) : (
-                  <div className="rounded-2xl border border-white/5 bg-surface p-8 leading-relaxed text-white/70 whitespace-pre-line shadow-[0_12px_30px_rgba(0,0,0,0.35)]">
+                  <div
+                    className={cn(
+                      "rounded-2xl border border-white/5 bg-surface p-8 leading-relaxed text-white/70 whitespace-pre-line shadow-[0_12px_30px_rgba(0,0,0,0.35)]",
+                      centerContent && "text-center mx-auto max-w-3xl text-[#FFC107] text-lg md:text-xl"
+                    )}
+                  >
                     {steps[activeStep].content}
                   </div>
                 )}
 
                 {stepOptions.length > 0 && (
-                  <div className="grid gap-3 md:grid-cols-2">
+                  <div className={cn("grid gap-3 md:grid-cols-2", centerContent && "mx-auto max-w-3xl justify-items-center")}>
                     {stepOptions.map((option) => {
                       const isSelected = selectedOption === option;
                       return (
@@ -288,7 +303,8 @@ export default function LessonPage() {
                           key={option}
                           onClick={() => handleOptionSelect(option)}
                           className={cn(
-                            "rounded-2xl border px-5 py-4 text-left text-sm font-semibold transition",
+                            "rounded-2xl border px-5 py-4 text-sm font-semibold transition w-full md:w-[260px]",
+                            centerContent ? "text-center" : "text-left",
                             isSelected
                               ? "border-primary bg-primary/15 text-primary shadow-[0_0_20px_rgba(255,195,0,0.2)]"
                               : "border-white/10 bg-[#101010] text-white/70 hover:border-primary/40 hover:text-white"
@@ -315,6 +331,7 @@ export default function LessonPage() {
                   <div
                     className={cn(
                       "rounded-2xl border px-6 py-4 text-sm font-semibold",
+                      centerContent && "text-center mx-auto max-w-2xl",
                       feedback.correct
                         ? "border-green-500/40 bg-green-500/10 text-green-300"
                         : "border-red-500/40 bg-red-500/10 text-red-300"
@@ -325,7 +342,7 @@ export default function LessonPage() {
                 )}
 
                 {steps[activeStep].uiHint === 'completion_reward' && (
-                  <div className="rounded-2xl border border-primary/30 bg-[#14110a] p-6 text-primary shadow-[0_0_25px_rgba(255,195,0,0.15)]">
+                  <div className="rounded-2xl border border-primary/30 bg-[#14110a] p-6 text-center text-primary shadow-[0_0_25px_rgba(255,195,0,0.15)]">
                     <div className="text-xs font-bold uppercase tracking-widest">Completion</div>
                     <div className="mt-2 text-2xl font-black">+30 XP</div>
                     <p className="mt-2 text-sm text-primary/80">You unlocked the next lesson node.</p>
@@ -340,7 +357,14 @@ export default function LessonPage() {
             </div>
           )}
 
-          <div className="mt-auto flex justify-between pt-10">
+          <div
+            className={cn(
+              "mt-auto flex pt-10 pb-4",
+              centerContent
+                ? "justify-between gap-20 max-w-[720px] mx-auto"
+                : "justify-between"
+            )}
+          >
             <button 
               disabled={activeStep === 0}
               onClick={() => setActiveStep(prev => prev - 1)}
@@ -384,7 +408,7 @@ export default function LessonPage() {
           </div>
         </section>
 
-        {!isMentalModelStep && (
+        {!hideTerminal && (
           <section className="relative flex min-h-[60vh] w-full md:w-[40%] flex-col bg-[#050505] p-6 md:min-h-full">
             <div className="mb-4 flex items-center justify-between">
               <div className="flex items-center gap-2 text-white/40">
