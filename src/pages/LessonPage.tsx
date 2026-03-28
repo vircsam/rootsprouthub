@@ -9,6 +9,7 @@ import IntroCard from '../components/lesson/IntroCard';
 import MentalModelCard from '../components/lesson/MentalModelCard';
 import DiagramManagerCard from '../components/lesson/DiagramManagerCard';
 import CoreConceptCard from '../components/lesson/CoreConceptCard';
+import IntroCardVariant from '../components/lesson/IntroCardVariant';
 
 export default function LessonPage() {
   const { id } = useParams();
@@ -277,6 +278,8 @@ export default function LessonPage() {
 
                 {steps[activeStep].uiHint === 'intro_card' ? (
                   <IntroCard title={steps[activeStep].title} content={steps[activeStep].content} diagramSrc={osDiagram} />
+                ) : steps[activeStep].uiHint === 'intro_card_variant' ? (
+                  <IntroCardVariant title={steps[activeStep].title} content={steps[activeStep].content} />
                 ) : steps[activeStep].uiHint === 'visual_mapping' ? (
                   <MentalModelCard title={steps[activeStep].title} content={steps[activeStep].content} />
                 ) : steps[activeStep].uiHint === 'diagram_manager' ? (
