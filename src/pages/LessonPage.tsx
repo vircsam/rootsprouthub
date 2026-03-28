@@ -9,7 +9,6 @@ import IntroCard from '../components/lesson/IntroCard';
 import MentalModelCard from '../components/lesson/MentalModelCard';
 import DiagramManagerCard from '../components/lesson/DiagramManagerCard';
 import CoreConceptCard from '../components/lesson/CoreConceptCard';
-import IntroCardVariant from '../components/lesson/IntroCardVariant';
 
 export default function LessonPage() {
   const { id } = useParams();

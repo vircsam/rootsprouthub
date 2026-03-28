@@ -124,24 +124,27 @@ function parseIntroContent(content: string): SectionMap {
 }
 
 function resolveImage(src: string, fallback?: string) {
-  if (src) {
-    if (src.startsWith('http') || src.startsWith('/')) return src;
-    if (src === 'traffic-flow-diagram') {
-      return new URL('../../assets/OS/section-1/traffic-flow-diagram.png', import.meta.url).toString();
-    }
-    if (src === 'os-diagram') {
-      return new URL('../../assets/OS/section-1/1.png', import.meta.url).toString();
-    }
+  if (!src) return fallback || '';
+
+  // If backend sends full URL or public path → use directly
+  if (src.startsWith('http') || src.startsWith('/')) {
     return src;
   }
-  return fallback || '';
+
+  // Otherwise map dynamically to assets folder
+  const sanitized = src.replace(/^\.?\/*/, '');
+  const hasExtension = /\.(png|jpg|jpeg|svg|webp)$/i.test(sanitized);
+  const filename = hasExtension ? sanitized : `${sanitized}.png`;
+  return new URL(`../../assets/OS/section-1/${filename}`, import.meta.url).toString();
 }
 
 export default function IntroCard({ title, content, diagramSrc }: IntroCardProps) {
   const sections = parseIntroContent(content);
   const [headline, supporting, ...restDescription] = sections.description;
-  const heroDescription = headline || '';
-  const heroSupporting = supporting ? supporting : restDescription.join(' ');
+  const descriptionHeading = sections.labels.description || headline || '';
+  const heroDescription = sections.labels.description ? (headline || '') : '';
+  const heroSupporting = supporting ? supporting : '';
+  const extraDescription = restDescription.length > 0 ? restDescription.join('\n') : '';
   const diagramImage = resolveImage(sections.diagramImage, diagramSrc);
 
   return (
@@ -157,7 +160,7 @@ export default function IntroCard({ title, content, diagramSrc }: IntroCardProps
             {title || ''}
           </div>
           <h1 className="mt-5 text-xl md:text-3xl font-black tracking-tight text-white break-words leading-tight">
-            {sections.labels.description}
+            {descriptionHeading}
           </h1>
           <div className="mt-5 h-[3px] w-20 rounded-full bg-[#FFC107]" />
           {heroDescription && (
@@ -165,6 +168,11 @@ export default function IntroCard({ title, content, diagramSrc }: IntroCardProps
           )}
           {heroSupporting && (
             <p className="mt-4 text-xs md:text-base leading-relaxed text-white/60">{heroSupporting}</p>
+          )}
+          {extraDescription && (
+            <p className="mt-3 text-xs md:text-base leading-relaxed text-white/60 whitespace-pre-line">
+              {extraDescription}
+            </p>
           )}
         </div>
       </div>
