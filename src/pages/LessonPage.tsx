@@ -350,11 +350,12 @@ export default function LessonPage() {
               </div>
             </div>
 
-            <div className="flex-1 overflow-y-auto font-mono text-lg space-y-2">
+            <div className="flex-1 overflow-y-auto font-mono whitespace-pre-wrap text-lg space-y-2">
               {terminalHistory.map((line, i) => (
                 <div
                   key={i}
                   className={cn(
+                    "font-mono whitespace-pre-wrap",
                     line.startsWith('$')
                       ? "text-white"
                       : line.startsWith('Success')
