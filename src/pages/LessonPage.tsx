@@ -6,6 +6,7 @@ import { cn } from '../lib/utils';
 import { getLesson, validateCommand, completeLesson, type LessonStep } from '../api/learning';
 import osDiagram from '../assets/OS/section-1/1.png';
 import IntroCard from '../components/lesson/IntroCard';
+import CoreConceptCard from '../components/lesson/CoreConceptCard';
 
 export default function LessonPage() {
   const { id } = useParams();
@@ -177,6 +178,8 @@ export default function LessonPage() {
 
                 {steps[activeStep].uiHint === 'intro_card' ? (
                   <IntroCard title={steps[activeStep].title} content={steps[activeStep].content} diagramSrc={osDiagram} />
+                ) : steps[activeStep].uiHint === 'bullet_points' ? (
+                  <CoreConceptCard content={steps[activeStep].content} />
                 ) : (
                   <div className="rounded-2xl border border-white/5 bg-surface p-8 leading-relaxed text-white/70 whitespace-pre-line shadow-[0_12px_30px_rgba(0,0,0,0.35)]">
                     {steps[activeStep].content}
