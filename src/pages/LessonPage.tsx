@@ -4,6 +4,8 @@ import { useParams, useNavigate } from 'react-router-dom';
 import { ChevronLeft, Terminal as TerminalIcon, Play, CheckCircle2, XCircle, Info } from 'lucide-react';
 import { cn } from '../lib/utils';
 import { getLesson, validateCommand, completeLesson, type LessonStep } from '../api/learning';
+import osDiagram from '../assets/OS/section-1/1.png';
+import IntroCard from '../components/lesson/IntroCard';
 
 export default function LessonPage() {
   const { id } = useParams();
@@ -151,8 +153,7 @@ export default function LessonPage() {
       <main className="flex flex-1 flex-col md:flex-row md:overflow-hidden">
         <section
           className={cn(
-            "flex w-full flex-col border-b border-white/10 p-6 md:p-10 overflow-y-auto",
-            isTerminalStep ? "md:w-1/2 md:border-b-0 md:border-r" : "md:w-full md:border-b-0"
+            "flex w-full flex-col border-b border-white/10 p-6 md:w-2/3 md:border-b-0 md:border-r md:p-10 overflow-y-auto"
           )}
         >
           {!isLoading && steps.length > 0 && (
@@ -174,9 +175,23 @@ export default function LessonPage() {
                   )}
                 </div>
 
-                <div className="rounded-2xl border border-white/5 bg-surface p-8 leading-relaxed text-white/70 whitespace-pre-line shadow-[0_12px_30px_rgba(0,0,0,0.35)]">
-                  {steps[activeStep].content}
-                </div>
+                {steps[activeStep].uiHint === 'intro_card' ? (
+                  <IntroCard title={steps[activeStep].title} content={steps[activeStep].content} diagramSrc={osDiagram} />
+                ) : (
+                  <div className="rounded-2xl border border-white/5 bg-surface p-8 leading-relaxed text-white/70 whitespace-pre-line shadow-[0_12px_30px_rgba(0,0,0,0.35)]">
+                    {steps[activeStep].content}
+                  </div>
+                )}
+
+                {steps[activeStep].uiHint === 'diagram_manager' && (
+                  <div className="rounded-2xl border border-primary/40 bg-[#0f0d08] p-5 shadow-[0_0_25px_rgba(255,195,0,0.12)]">
+                    <img
+                      src={osDiagram}
+                      alt="OS manager diagram"
+                      className="w-full rounded-xl border border-primary/30"
+                    />
+                  </div>
+                )}
 
                 {stepOptions.length > 0 && (
                   <div className="grid gap-3 md:grid-cols-2">
@@ -277,8 +292,7 @@ export default function LessonPage() {
           </div>
         </section>
 
-        {isTerminalStep && (
-          <section className="relative flex min-h-[60vh] w-full md:w-1/2 flex-col bg-[#050505] p-6 md:min-h-full">
+        <section className="relative flex min-h-[60vh] w-full md:w-1/3 flex-col bg-[#050505] p-6 md:min-h-full">
             <div className="mb-4 flex items-center justify-between">
               <div className="flex items-center gap-2 text-white/40">
                 <TerminalIcon size={16} />
@@ -338,7 +352,6 @@ export default function LessonPage() {
               )}
             </AnimatePresence>
           </section>
-        )}
       </main>
     </div>
   );
