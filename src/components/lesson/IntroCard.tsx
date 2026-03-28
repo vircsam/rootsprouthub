@@ -15,6 +15,7 @@ type SectionMap = {
   observe: string[];
   diagramText: string[];
   terminalPrompt: string[];
+  whySplit: { title: string; detail: string }[];
   diagramImage: string;
   labels: {
     description: string;
@@ -25,6 +26,7 @@ type SectionMap = {
     observe: string;
     diagramText: string;
     terminalPrompt: string;
+    whySplit: string;
   };
 };
 
@@ -39,6 +41,7 @@ const headingMap: Record<string, keyof SectionMap | 'diagram'> = {
   'Observe:': 'observe',
   'Diagram: Traffic Flow Model': 'diagramText',
   'Terminal Prompt': 'terminalPrompt',
+  'Why this split exists:': 'whySplit',
 };
 
 function parseIntroContent(content: string): SectionMap {
@@ -52,6 +55,7 @@ function parseIntroContent(content: string): SectionMap {
     diagramText: [],
     terminalPrompt: [],
     diagramImage: '',
+    whySplit: [],
     labels: {
       description: '',
       keyPoints: '',
@@ -61,6 +65,7 @@ function parseIntroContent(content: string): SectionMap {
       observe: '',
       diagramText: '',
       terminalPrompt: '',
+      whySplit: '',
     },
   };
   let current: keyof SectionMap | 'diagram' = 'description';
@@ -95,6 +100,21 @@ function parseIntroContent(content: string): SectionMap {
         return;
       }
     }
+
+    if (current === 'whySplit') {
+      const cleaned = line.replace(/^[-•]\s*/, ''); // remove "-"
+      const parts = cleaned.split(':').map((p) => p.trim());
+    
+      if (parts.length >= 2) {
+        const [title, ...rest] = parts;
+        sections.whySplit.push({
+          title,
+          detail: rest.join(':'),
+        });
+      }
+      return;
+    }
+
     if (current === 'visualMapping') {
       sections.visualMapping.push(line);
       return;
@@ -145,7 +165,9 @@ export default function IntroCard({ title, content, diagramSrc }: IntroCardProps
   const heroDescription = sections.labels.description ? (headline || '') : '';
   const heroSupporting = supporting ? supporting : '';
   const extraDescription = restDescription.length > 0 ? restDescription.join('\n') : '';
-  const diagramImage = resolveImage(sections.diagramImage, diagramSrc);
+  const diagramImage = sections.diagramImage
+  ? resolveImage(sections.diagramImage)
+  : '';
 
   return (
     <motion.div
@@ -156,7 +178,7 @@ export default function IntroCard({ title, content, diagramSrc }: IntroCardProps
     >
       <div className="mt-10">
         <div className="rounded-3xl border border-[#FFC107]/40 bg-[#121212] p-6 md:p-10 shadow-[0_0_34px_rgba(255,195,0,0.14)] transition hover:scale-[1.02] hover:shadow-[0_0_42px_rgba(255,195,0,0.24)] overflow-hidden">
-          <div className="text-xs font-bold uppercase tracking-[0.25em] text-[#FFC107]">
+          <div className="text-[12px] font-bold uppercase tracking-[0.25em] text-[#FFC107]">
             {title || ''}
           </div>
           <h1 className="mt-5 text-xl md:text-3xl font-black tracking-tight text-white break-words leading-tight">
@@ -179,7 +201,7 @@ export default function IntroCard({ title, content, diagramSrc }: IntroCardProps
 
       <div className="mt-8 space-y-6">
         <div>
-          <div className="mb-4 text-[10px] font-bold uppercase tracking-[0.3em] text-white/50">
+        <div className="mt-8 mb-8 text-xs md:text-base font-extrabold uppercase tracking-[0.2em] text-white/50">
             {sections.labels.keyPoints || ''}
           </div>
           <div className="grid gap-6 md:grid-cols-3">
@@ -200,6 +222,37 @@ export default function IntroCard({ title, content, diagramSrc }: IntroCardProps
               </div>
             ))}
           </div>
+
+          {sections.whySplit.length > 0 && (
+            <div className="rounded-2xl border border-[#FFC107]/30 bg-[#14110a] p-6 shadow-[0_0_22px_rgba(255,195,0,0.12)]">
+              <div className="mb-4 text-[14px] font-bold uppercase tracking-[0.3em] text-[#FFC107]">
+                {sections.labels.whySplit || 'Why this matters'}
+              </div>
+
+              <div className="overflow-hidden rounded-xl border border-white/10">
+                <table className="w-full text-left text-sm">
+                  <thead className="bg-[#1a1a1a] text-white/70 text-xs uppercase">
+                    <tr>
+                      <th className="px-4 py-3">Concept</th>
+                      <th className="px-4 py-3">Why it matters</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {sections.whySplit.map((item) => (
+                      <tr key={item.title} className="border-t border-white/10">
+                        <td className="px-4 py-3 font-semibold text-white">
+                          {item.title}
+                        </td>
+                        <td className="px-4 py-3 text-white/70">
+                          {item.detail}
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          )}
         </div>
 
         {sections.visualMapping.length > 0 && (
@@ -251,13 +304,13 @@ export default function IntroCard({ title, content, diagramSrc }: IntroCardProps
           </div>
         )}
 
-        {(sections.diagramText.length > 0 || diagramImage) && (
+      {(sections.diagramText.length > 0 || sections.diagramImage) && (
           <div className="rounded-2xl border border-[#FFC107]/30 bg-[#0f0d08] p-6 shadow-[0_0_25px_rgba(255,195,0,0.12)]">
             <div className="text-[10px] font-bold uppercase tracking-[0.3em] text-[#FFC107]">
-              {sections.labels.diagramText || ''}
+              DIAGRAM
             </div>
             {diagramImage ? (
-              <img src={diagramImage} alt="Diagram" className="mt-4 w-full rounded-2xl" />
+              <img src={diagramImage} alt="Diagram" className="mt-4 w-full max-w-[400px] md:max-w-[600px] mx-auto rounded-2xl border border-white/10" />
             ) : (
               <pre className="mt-4 whitespace-pre-wrap font-mono text-xs md:text-sm text-white/80">
                 {sections.diagramText.join('\n')}
@@ -267,7 +320,7 @@ export default function IntroCard({ title, content, diagramSrc }: IntroCardProps
         )}
 
         <div>
-          <div className="mb-4 text-[10px] font-bold uppercase tracking-[0.3em] text-white/50">
+        <div className="mt-8 mb-8 text-sm md:text-base font-extrabold uppercase tracking-[0.2em] text-white/50">
             {sections.labels.examples || ''}
           </div>
           <div className="grid gap-6 md:grid-cols-2">
