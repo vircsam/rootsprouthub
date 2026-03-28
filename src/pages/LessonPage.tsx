@@ -20,6 +20,7 @@ export default function LessonPage() {
   const [selectedOption, setSelectedOption] = useState<string | null>(null);
   const [feedback, setFeedback] = useState<{ correct: boolean; message: string } | null>(null);
   const [isLoading, setIsLoading] = useState(true);
+  const [completedCommands, setCompletedCommands] = useState<Record<number, string[]>>({});
 
   useEffect(() => {
     if (!id) return;
@@ -54,12 +55,29 @@ export default function LessonPage() {
   const stepType = currentStep?.type || (currentStep?.task ? 'terminal' : 'concept');
   const stepOptions = Array.isArray(currentStep?.options) ? currentStep?.options : [];
   const isTerminalStep = stepType === 'terminal';
-  const canContinue = !isTerminalStep && (stepOptions.length === 0 || selectedOption !== null);
+  const canContinue = stepOptions.length === 0 || selectedOption !== null;
 
   useEffect(() => {
     setSelectedOption(null);
     setFeedback(null);
   }, [activeStep]);
+
+  const requiredCommands = (() => {
+    if (!currentStep?.content) return [];
+    const lines = currentStep.content.split('\n').map((line) => line.trim());
+    const commands: string[] = [];
+    for (let i = 0; i < lines.length; i += 1) {
+      if (lines[i] === 'Try it' && lines[i + 1]) {
+        commands.push(lines[i + 1]);
+      }
+    }
+    return commands;
+  })();
+
+  const completedForStep = completedCommands[activeStep] || [];
+  const allCommandsDone =
+    requiredCommands.length === 0 ||
+    requiredCommands.every((command) => completedForStep.includes(command));
 
   const advanceStep = (fromIndex: number) => {
     const nextStep = fromIndex + 1;
@@ -100,10 +118,28 @@ export default function LessonPage() {
       const result = await validateCommand(id, currentStep.id, terminalInput.trim());
       newHistory.push(result.message);
       setIsCorrect(result.correct);
+      let nextCompleted = completedForStep;
+      if (result.correct && requiredCommands.length > 0 && requiredCommands.includes(terminalInput.trim())) {
+        setCompletedCommands((prev) => {
+          const existing = prev[activeStep] || [];
+          if (existing.includes(terminalInput.trim())) {
+            nextCompleted = existing;
+            return prev;
+          }
+          const updated = [...existing, terminalInput.trim()];
+          nextCompleted = updated;
+          return { ...prev, [activeStep]: updated };
+        });
+      }
       if (result.correct) {
         setTimeout(() => {
           setIsCorrect(null);
-          advanceStep(activeStep);
+          const done =
+            requiredCommands.length === 0 ||
+            requiredCommands.every((command) => (nextCompleted || []).includes(command));
+          if (done && requiredCommands.length === 0) {
+            advanceStep(activeStep);
+          }
         }, 1500);
       } else {
         setTimeout(() => setIsCorrect(null), 2000);
@@ -269,7 +305,13 @@ export default function LessonPage() {
             {canContinue && progress < 100 && (
               <button
                 onClick={() => advanceStep(activeStep)}
-                className="rounded-xl border border-primary/40 bg-primary/10 px-6 py-3 text-sm font-bold text-primary hover:bg-primary/20 transition"
+                disabled={!allCommandsDone}
+                className={cn(
+                  "rounded-xl border px-6 py-3 text-sm font-bold transition",
+                  allCommandsDone
+                    ? "border-primary/40 bg-primary/10 text-primary hover:bg-primary/20"
+                    : "border-white/10 bg-white/5 text-white/30 cursor-not-allowed"
+                )}
               >
                 Continue
               </button>

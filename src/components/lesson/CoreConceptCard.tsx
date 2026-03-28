@@ -52,6 +52,23 @@ export default function CoreConceptCard({ content }: CoreConceptCardProps) {
           </div>
         ))}
       </div>
+      {items.length > 0 && (
+        <div className="mt-6 rounded-2xl border border-[#FFC107]/40 bg-[#111111] p-5">
+          <div className="text-[10px] font-bold uppercase tracking-[0.3em] text-[#FFC107]/80">
+            Terminal Prompt
+          </div>
+          <div className="mt-3 grid gap-2">
+            {items.map((item) => (
+              <div
+                key={`${item.title}-prompt`}
+                className="rounded-lg border border-[#FFC107]/40 bg-[#0B0B0B] px-4 py-2 font-mono text-sm text-[#FFC107]"
+              >
+                {item.command}
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
     </div>
   );
 }
