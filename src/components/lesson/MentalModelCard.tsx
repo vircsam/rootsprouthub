@@ -1,4 +1,5 @@
 import { motion } from 'motion/react';
+import trafficFlowDiagram from '../../assets/OS/section-1/traffic-flow-diagram.png';
 
 type MentalModelCardProps = {
   title: string;
@@ -59,6 +60,32 @@ function parseMentalModelContent(content: string) {
 
 export default function MentalModelCard({ title, content }: MentalModelCardProps) {
   const sections = parseMentalModelContent(content);
+  const stripEmoji = (value: string) =>
+    value.replace(/[\u{1F300}-\u{1FAFF}\u{2600}-\u{27BF}]/gu, '').trim();
+  const splitKeyInsights = (lines: string[]) => {
+    const withoutOS: string[] = [];
+    const withOS: string[] = [];
+    let bucket: 'without' | 'with' | null = null;
+    lines.forEach((line) => {
+      const cleaned = stripEmoji(line).replace(/:$/, '').trim();
+      if (!cleaned) return;
+      if (cleaned.toLowerCase() === 'without the os') {
+        bucket = 'without';
+        return;
+      }
+      if (cleaned.toLowerCase() === 'with the os') {
+        bucket = 'with';
+        return;
+      }
+      if (bucket === 'without') {
+        withoutOS.push(cleaned);
+      } else if (bucket === 'with') {
+        withOS.push(cleaned);
+      }
+    });
+    return { withoutOS, withOS };
+  };
+  const keyInsightGroups = splitKeyInsights(sections.keyInsight);
   return (
     <motion.div
       initial={{ opacity: 0, y: 12 }}
@@ -67,9 +94,6 @@ export default function MentalModelCard({ title, content }: MentalModelCardProps
       className="mx-auto w-full max-w-[1200px] px-4 md:px-8"
     >
       <div className="rounded-[32px] border border-primary/40 bg-[radial-gradient(circle_at_top,_rgba(255,193,7,0.18),_rgba(8,8,8,0.95))] p-8 md:p-12 shadow-[0_0_40px_rgba(255,195,0,0.18)]">
-        <div className="text-[10px] font-bold uppercase tracking-[0.4em] text-primary">
-          Mental Model
-        </div>
         <h1 className="mt-4 text-3xl md:text-5xl font-black tracking-tight text-white">
           {title}
         </h1>
@@ -89,7 +113,7 @@ export default function MentalModelCard({ title, content }: MentalModelCardProps
                 key={line}
                 className="rounded-2xl border border-primary/30 bg-[#151515] px-5 py-4 text-sm md:text-base font-semibold text-white/85 shadow-[0_0_18px_rgba(255,195,0,0.08)]"
               >
-                {line}
+                {stripEmoji(line)}
               </div>
             ))}
           </div>
@@ -97,14 +121,35 @@ export default function MentalModelCard({ title, content }: MentalModelCardProps
       )}
 
       {sections.keyInsight.length > 0 && (
-        <div className="mt-8 rounded-3xl border border-primary/30 bg-[#14110a] p-7 md:p-9 text-white/80 shadow-[0_0_26px_rgba(255,195,0,0.15)]">
-          <div className="text-[10px] font-bold uppercase tracking-[0.35em] text-primary">
+        <div className="mt-8">
+          <div className="mb-4 text-[10px] font-bold uppercase tracking-[0.35em] text-primary">
             Key Insight
           </div>
-          <div className="mt-4 space-y-1 text-sm md:text-base leading-relaxed whitespace-pre-line">
-            {sections.keyInsight.map((line) => (
-              <div key={line}>{line}</div>
-            ))}
+          <div className="grid gap-4 md:grid-cols-2">
+            <div className="rounded-2xl border border-white/10 bg-[#14110a] p-5 shadow-[0_0_20px_rgba(255,195,0,0.1)]">
+              <div className="text-xs font-bold uppercase tracking-[0.3em] text-white/60">
+                Without the OS
+              </div>
+              <ul className="mt-4 space-y-2 text-sm text-white/75">
+                {keyInsightGroups.withoutOS.map((line) => (
+                  <li key={line} className="rounded-lg border border-white/10 bg-[#1b140b] px-3 py-2">
+                    {line}
+                  </li>
+                ))}
+              </ul>
+            </div>
+            <div className="rounded-2xl border border-primary/30 bg-[#14110a] p-5 shadow-[0_0_20px_rgba(255,195,0,0.12)]">
+              <div className="text-xs font-bold uppercase tracking-[0.3em] text-primary">
+                With the OS
+              </div>
+              <ul className="mt-4 space-y-2 text-sm text-white/75">
+                {keyInsightGroups.withOS.map((line) => (
+                  <li key={line} className="rounded-lg border border-primary/20 bg-[#1b140b] px-3 py-2">
+                    {line}
+                  </li>
+                ))}
+              </ul>
+            </div>
           </div>
         </div>
       )}
@@ -117,7 +162,7 @@ export default function MentalModelCard({ title, content }: MentalModelCardProps
           <div className="mt-4 grid gap-3 md:grid-cols-2">
             {sections.observe.map((line) => (
               <div key={line} className="rounded-xl border border-white/10 bg-[#171717] px-4 py-3 text-sm text-white/75">
-                {line}
+                {stripEmoji(line)}
               </div>
             ))}
           </div>
@@ -129,9 +174,11 @@ export default function MentalModelCard({ title, content }: MentalModelCardProps
           <div className="text-[10px] font-bold uppercase tracking-[0.35em] text-primary">
             Traffic Flow Diagram
           </div>
-          <pre className="mt-4 whitespace-pre-wrap font-mono text-xs md:text-sm text-white/80">
-            {sections.diagramText.join('\n')}
-          </pre>
+          <img
+            src={trafficFlowDiagram}
+            alt="Traffic flow diagram"
+            className="mt-4 w-full max-w-[720px] mx-auto rounded-2xl"
+          />
         </div>
       )}
     </motion.div>
