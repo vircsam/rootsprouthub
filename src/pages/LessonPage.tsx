@@ -114,22 +114,23 @@ export default function LessonPage() {
     if (!terminalInput.trim()) return;
     if (!id || steps.length === 0) return;
 
+    const input = terminalInput.trim();
     const newHistory = [...terminalHistory, `$ ${terminalInput}`];
 
     try {
       const currentStep = steps[activeStep];
-      const result = await validateCommand(id, currentStep.id, terminalInput.trim());
+      let result = await validateCommand(id, currentStep.id, input);
       newHistory.push(result.message);
       setIsCorrect(result.correct);
       let nextCompleted = completedForStep;
-      if (result.correct && requiredCommands.length > 0 && requiredCommands.includes(terminalInput.trim())) {
+      if (result.correct && requiredCommands.length > 0 && requiredCommands.includes(input)) {
         setCompletedCommands((prev) => {
           const existing = prev[activeStep] || [];
-          if (existing.includes(terminalInput.trim())) {
+          if (existing.includes(input)) {
             nextCompleted = existing;
             return prev;
           }
-          const updated = [...existing, terminalInput.trim()];
+          const updated = [...existing, input];
           nextCompleted = updated;
           return { ...prev, [activeStep]: updated };
         });
@@ -148,6 +149,54 @@ export default function LessonPage() {
         setTimeout(() => setIsCorrect(null), 2000);
       }
     } catch (err) {
+      if (err instanceof Error && err.message === 'step not found') {
+        try {
+          const refreshed = await getLesson(id);
+          setSteps(refreshed.steps);
+          const currentStep = steps[activeStep];
+          const refreshedIndex = refreshed.steps.findIndex((step) => step.order === currentStep?.order);
+          const refreshedStep = refreshedIndex >= 0 ? refreshed.steps[refreshedIndex] : undefined;
+          if (refreshedIndex >= 0) {
+            setActiveStep(refreshedIndex);
+          }
+          if (refreshedStep) {
+            const retry = await validateCommand(id, refreshedStep.id, input);
+            newHistory.push(retry.message);
+            setIsCorrect(retry.correct);
+            let nextCompleted = completedForStep;
+            if (retry.correct && requiredCommands.length > 0 && requiredCommands.includes(input)) {
+              setCompletedCommands((prev) => {
+                const existing = prev[activeStep] || [];
+                if (existing.includes(input)) {
+                  nextCompleted = existing;
+                  return prev;
+                }
+                const updated = [...existing, input];
+                nextCompleted = updated;
+                return { ...prev, [activeStep]: updated };
+              });
+            }
+            if (retry.correct) {
+              setTimeout(() => {
+                setIsCorrect(null);
+                const done =
+                  requiredCommands.length === 0 ||
+                  requiredCommands.every((command) => (nextCompleted || []).includes(command));
+                if (done && requiredCommands.length === 0) {
+                  advanceStep(activeStep);
+                }
+              }, 1500);
+            } else {
+              setTimeout(() => setIsCorrect(null), 2000);
+            }
+            setTerminalHistory(newHistory);
+            setTerminalInput('');
+            return;
+          }
+        } catch {
+          // fall through to generic error handling
+        }
+      }
       if (err instanceof Error && err.message === 'unauthorized') {
         navigate('/login');
         return;
