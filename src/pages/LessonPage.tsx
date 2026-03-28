@@ -55,7 +55,7 @@ export default function LessonPage() {
   const stepType = currentStep?.type || (currentStep?.task ? 'terminal' : 'concept');
   const stepOptions = Array.isArray(currentStep?.options) ? currentStep?.options : [];
   const isTerminalStep = stepType === 'terminal';
-  const canContinue = stepOptions.length === 0 || selectedOption !== null;
+  const canContinue = true;
 
   useEffect(() => {
     setSelectedOption(null);
@@ -305,10 +305,10 @@ export default function LessonPage() {
             {canContinue && progress < 100 && (
               <button
                 onClick={() => advanceStep(activeStep)}
-                disabled={!allCommandsDone}
+                disabled={false}
                 className={cn(
                   "rounded-xl border px-6 py-3 text-sm font-bold transition",
-                  allCommandsDone
+                  true
                     ? "border-primary/40 bg-primary/10 text-primary hover:bg-primary/20"
                     : "border-white/10 bg-white/5 text-white/30 cursor-not-allowed"
                 )}

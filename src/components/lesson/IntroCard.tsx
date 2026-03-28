@@ -300,23 +300,18 @@ export default function IntroCard({ title, content, diagramSrc }: IntroCardProps
           </div>
         </div>
 
-        <div className="rounded-2xl border-2 border-[#FFD166]/60 bg-[#0F0F0F] p-5 text-base text-white/70">
-          <div className="mb-3 text-xs font-bold uppercase tracking-widest text-[#FFD166]/90">
-            Terminal Prompt
-          </div>
-          {sections.mentalModel.length > 0 && (
-            <>
-              <div className="rounded-xl border border-[#FFD166]/40 bg-[#101010] px-4 py-3 font-mono text-[#FFD166]">
-                {sections.mentalModel[0]}
-              </div>
-              {sections.mentalModel.slice(1).map((line) => (
-                <p key={line} className="mt-3 text-white/70">
-                  {line}
-                </p>
+        {sections.terminalPrompt.length > 0 && (
+          <div className="rounded-2xl border-2 border-[#FFD166]/60 bg-[#0F0F0F] p-5 text-base text-white/70">
+            <div className="mb-3 text-xs font-bold uppercase tracking-widest text-[#FFD166]/90">
+              Terminal Prompt
+            </div>
+            <div className="space-y-2 font-mono text-[#FFD166]">
+              {sections.terminalPrompt.map((line) => (
+                <div key={line}>{line}</div>
               ))}
-            </>
-          )}
-        </div>
+            </div>
+          </div>
+        )}
       </div>
     </motion.div>
   );
