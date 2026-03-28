@@ -7,6 +7,7 @@ import { getLesson, validateCommand, completeLesson, type LessonStep } from '../
 import osDiagram from '../assets/OS/section-1/1.png';
 import IntroCard from '../components/lesson/IntroCard';
 import MentalModelCard from '../components/lesson/MentalModelCard';
+import DiagramManagerCard from '../components/lesson/DiagramManagerCard';
 import CoreConceptCard from '../components/lesson/CoreConceptCard';
 
 export default function LessonPage() {
@@ -219,21 +220,13 @@ export default function LessonPage() {
                   <IntroCard title={steps[activeStep].title} content={steps[activeStep].content} diagramSrc={osDiagram} />
                 ) : steps[activeStep].uiHint === 'visual_mapping' ? (
                   <MentalModelCard title={steps[activeStep].title} content={steps[activeStep].content} />
+                ) : steps[activeStep].uiHint === 'diagram_manager' ? (
+                  <DiagramManagerCard content={steps[activeStep].content} diagramSrc={osDiagram} />
                 ) : steps[activeStep].uiHint === 'bullet_points' ? (
                   <CoreConceptCard content={steps[activeStep].content} />
                 ) : (
                   <div className="rounded-2xl border border-white/5 bg-surface p-8 leading-relaxed text-white/70 whitespace-pre-line shadow-[0_12px_30px_rgba(0,0,0,0.35)]">
                     {steps[activeStep].content}
-                  </div>
-                )}
-
-                {steps[activeStep].uiHint === 'diagram_manager' && (
-                  <div className="rounded-2xl border border-primary/40 bg-[#0f0d08] p-5 shadow-[0_0_25px_rgba(255,195,0,0.12)]">
-                    <img
-                      src={osDiagram}
-                      alt="OS manager diagram"
-                      className="w-full rounded-xl border border-primary/30"
-                    />
                   </div>
                 )}
 
