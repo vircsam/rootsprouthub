@@ -113,12 +113,12 @@ export default function MentalModelCard({ content }: MentalModelCardProps) {
     lines.forEach((line) => {
       const cleaned = stripEmoji(line).replace(/:$/, '').trim();
       if (!cleaned) return;
-      if (cleaned.toLowerCase() === 'without the os') {
+      if (['without the os', 'without kernel protection'].includes(cleaned.toLowerCase())) {
         bucket = 'without';
         sections.keyInsightWithoutLabel = line;
         return;
       }
-      if (cleaned.toLowerCase() === 'with the os') {
+      if (['with the os', 'with kernel protection'].includes(cleaned.toLowerCase())) {
         bucket = 'with';
         sections.keyInsightWithLabel = line;
         return;
