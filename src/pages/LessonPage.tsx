@@ -305,7 +305,7 @@ export default function LessonPage() {
               </div>
             </div>
 
-            <div className="flex-1 overflow-y-auto font-mono text-xl space-y-2">
+            <div className="flex-1 overflow-y-auto font-mono text-lg space-y-2">
               {terminalHistory.map((line, i) => (
                 <div
                   key={i}
@@ -322,14 +322,14 @@ export default function LessonPage() {
                   {line}
                 </div>
               ))}
-              <form onSubmit={handleTerminalSubmit} className="flex items-center gap-2 text-xl">
-                <span className="text-primary font-bold text-xl">$</span>
+              <form onSubmit={handleTerminalSubmit} className="flex items-center gap-2 text-lg">
+                <span className="text-primary font-bold text-lg">$</span>
                 <input
                   autoFocus
                   type="text"
                   value={terminalInput}
                   onChange={(e) => setTerminalInput(e.target.value)}
-                  className="flex-1 bg-transparent outline-none text-white text-xl"
+                  className="flex-1 bg-transparent outline-none text-white text-lg"
                   placeholder="Type command..."
                 />
               </form>
