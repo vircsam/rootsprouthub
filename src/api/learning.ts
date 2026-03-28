@@ -58,6 +58,11 @@ export type LessonStep = {
   content: string;
   task: string;
   order: number;
+  type?: string;
+  options?: string[];
+  answer?: string;
+  explanation?: string;
+  uiHint?: string;
 };
 
 export type LessonPayload = {
