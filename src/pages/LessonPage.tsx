@@ -6,6 +6,7 @@ import { cn } from '../lib/utils';
 import { getLesson, validateCommand, completeLesson, type LessonStep } from '../api/learning';
 import osDiagram from '../assets/OS/section-1/1.png';
 import IntroCard from '../components/lesson/IntroCard';
+import MentalModelCard from '../components/lesson/MentalModelCard';
 import CoreConceptCard from '../components/lesson/CoreConceptCard';
 
 export default function LessonPage() {
@@ -55,6 +56,7 @@ export default function LessonPage() {
   const stepType = currentStep?.type || (currentStep?.task ? 'terminal' : 'concept');
   const stepOptions = Array.isArray(currentStep?.options) ? currentStep?.options : [];
   const isTerminalStep = stepType === 'terminal';
+  const isMentalModelStep = currentStep?.uiHint === 'visual_mapping';
   const canContinue = true;
 
   useEffect(() => {
@@ -187,10 +189,11 @@ export default function LessonPage() {
         </div>
       </header>
 
-      <main className="flex flex-1 flex-col md:flex-row md:overflow-hidden">
+      <main className={cn("flex flex-1 flex-col md:flex-row md:overflow-hidden", isMentalModelStep && "md:flex-col")}>
         <section
           className={cn(
-            "flex w-full flex-col border-b border-white/10 p-6 md:w-[55%] md:border-b-0 md:border-r md:p-10 overflow-y-auto"
+            "flex w-full flex-col border-b border-white/10 p-6 md:border-b-0 md:p-10 overflow-y-auto",
+            isMentalModelStep ? "md:w-full md:border-r-0" : "md:w-[55%] md:border-r"
           )}
         >
           {!isLoading && steps.length > 0 && (
@@ -212,8 +215,10 @@ export default function LessonPage() {
                   )}
                 </div>
 
-                {steps[activeStep].uiHint === 'intro_card' || steps[activeStep].uiHint === 'visual_mapping' ? (
+                {steps[activeStep].uiHint === 'intro_card' ? (
                   <IntroCard title={steps[activeStep].title} content={steps[activeStep].content} diagramSrc={osDiagram} />
+                ) : steps[activeStep].uiHint === 'visual_mapping' ? (
+                  <MentalModelCard title={steps[activeStep].title} content={steps[activeStep].content} />
                 ) : steps[activeStep].uiHint === 'bullet_points' ? (
                   <CoreConceptCard content={steps[activeStep].content} />
                 ) : (
@@ -337,7 +342,8 @@ export default function LessonPage() {
           </div>
         </section>
 
-        <section className="relative flex min-h-[60vh] w-full md:w-[40%] flex-col bg-[#050505] p-6 md:min-h-full">
+        {!isMentalModelStep && (
+          <section className="relative flex min-h-[60vh] w-full md:w-[40%] flex-col bg-[#050505] p-6 md:min-h-full">
             <div className="mb-4 flex items-center justify-between">
               <div className="flex items-center gap-2 text-white/40">
                 <TerminalIcon size={16} />
@@ -398,6 +404,7 @@ export default function LessonPage() {
               )}
             </AnimatePresence>
           </section>
+        )}
       </main>
     </div>
   );
